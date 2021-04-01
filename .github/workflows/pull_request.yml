@@ -19,7 +19,7 @@ jobs:
           mkdir -p builder
 
       - name: Download artifacts from steves-test-repo
-        uses: aochmann/actions-download-artifact@1.0.0
+        uses: aochmann/actions-download-artifact@1.0.4
         with:
           # Optional, GitHub token
           github_token: ${{secrets.KUHLMANNS_TOKEN}}
@@ -28,7 +28,7 @@ jobs:
           # will download all artifacts if not specified
           # and extract them in respective subdirectories
           # https://github.com/actions/download-artifact#download-all-artifacts
-          name: version-num-${{ github.head_ref }}-txt 
+          name: version-num-${{ github.head_ref }}-txt
 
           # Optional, download latest artifact
           latest: true
