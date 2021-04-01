@@ -14,6 +14,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Make builder directory
+        run: |
+          mkdir -p builder
+
+      - name: Download artifacts from steves-test-repo
+        uses: aochmann/actions-download-artifact@1.0.4
+        with:
+          # Optional, GitHub token
+          github_token: ${{secrets.KUHLMANNS_TOKEN}}
+
+          # Optional, uploaded artifact name,
+          # will download all artifacts if not specified
+          # and extract them in respective subdirectories
+          # https://github.com/actions/download-artifact#download-all-artifacts
+          name: version-num-${{ github.head_ref }}-txt
+
+          # Optional, download latest artifact
+          latest: true
+
+          # Optional, directory where to extract artifact
+          path: builder
+
+          # Optional, defaults to current repo
+          repo: SKuhlmanns/steves-test-repo
+
       - name: Build the application
         working-directory: build
         run: |
