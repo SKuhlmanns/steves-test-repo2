@@ -39,6 +39,13 @@ jobs:
           # Optional, defaults to current repo
           repo: SKuhlmanns/steves-test-repo
 
+      - name: Unzip the artifacts and display contents
+        working-directory: builder
+        run: |
+          unzip \*.zip
+          ls -l
+          cat *.txt
+
       - name: Build the application
         working-directory: build
         run: |
