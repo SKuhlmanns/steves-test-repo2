@@ -1,0 +1,102 @@
+name: Build on push to develop and release branches
+
+on: 
+  push:
+    branches:
+      # Push events on develop branch
+      - develop
+      # Push events on release branches
+      - 'release_v*'
+    tags:
+      - LIB_*    # Push events matching refs/heads/LIB_* tags
+
+jobs:
+
+  build-linux:
+    runs-on: ubuntu-latest
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
+      PHASE_ID: x
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get branch or tag name from git reference
+        run: |
+          BRANCH_OR_TAG=`basename ${{ github.ref }}`
+          echo "BRANCH_OR_TAG=${BRANCH_OR_TAG}" >> $GITHUB_ENV
+
+      - name: Setup build environment for release branches
+        if: contains(github.ref,'refs/heads/release_v')
+        run: |
+          echo "PHASE ID: ${PHASE_ID}"
+          echo "BUILD NUMBER: ${BUILD_NUMBER}"
+          echo "Setting PHASE ID to b"
+          echo "PHASE_ID=b" >> $GITHUB_ENV
+
+      - name: Setup build environment for release tags
+        if: contains(github.ref,'refs/tags/LIB')
+        run: |
+          echo "PHASE ID: ${PHASE_ID}"
+          echo "BUILD NUMBER: ${BUILD_NUMBER}"
+          echo "Setting PHASE ID to blank"
+          echo "PHASE_ID=" >> $GITHUB_ENV
+
+      - name: Build the application
+        working-directory: build
+        run: |
+          echo "Repo Owner:" ${{ github.repository_owner }}
+          echo "Run ID:" ${{ github.run_id }}
+
+          export VER_NUM=`cat version.txt` 
+          echo "${VER_NUM}${{ env.PHASE_ID }}-${BUILD_NUMBER}" > version_num.txt
+          PHASE_ID=${{ env.PHASE_ID }}
+          echo "PHASE ID: ${PHASE_ID}"
+          cat version_num.txt
+          bash bbuild.sh .. 
+
+      - name: Upload version.txt artifact
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: version-${{ env.BRANCH_OR_TAG }}-txt
+          path: |
+            build/version.txt
+
+      - name: Upload version_num.txt artifact
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: version-num-${{ env.BRANCH_OR_TAG }}-txt
+          path: |
+            build/version_num.txt
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - name: Dump job context
+        env:
+          JOB_CONTEXT: ${{ toJSON(job) }}
+        run: echo "$JOB_CONTEXT"
+
+      - name: Dump steps context
+        env:
+          STEPS_CONTEXT: ${{ toJSON(steps) }}
+        run: echo "$STEPS_CONTEXT"
+
+      - name: Dump runner context
+        env:
+          RUNNER_CONTEXT: ${{ toJSON(runner) }}
+        run: echo "$RUNNER_CONTEXT"
+
+      - name: Dump strategy context
+        env:
+          STRATEGY_CONTEXT: ${{ toJSON(strategy) }}
+        run: echo "$STRATEGY_CONTEXT"
+
+      - name: Dump matrix context
+        env:
+          MATRIX_CONTEXT: ${{ toJSON(matrix) }}
+        run: echo "$MATRIX_CONTEXT"
