@@ -28,7 +28,7 @@ jobs:
           # will download all artifacts if not specified
           # and extract them in respective subdirectories
           # https://github.com/actions/download-artifact#download-all-artifacts
-          name: version-num-${{ github.head_ref }}-txt
+          name: version-num-${{ github.base_ref }}-txt
 
           # Optional, download latest artifact
           latest: true
