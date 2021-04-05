@@ -9,7 +9,6 @@ on:
       - 'release_v*'
     tags:
       - COMM_*    # Push events matching refs/heads/COMM_* tags
-  repository_dispatch:
 
 jobs:
 
@@ -20,10 +19,6 @@ jobs:
       PHASE_ID: x
 
     steps:
-      - name: Event Information
-        run: |
-          echo "Event '${{ github.event.action }}' received from '${{ github.event.client_payload.repository }}'"
-
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -140,11 +135,3 @@ jobs:
         env:
           MATRIX_CONTEXT: ${{ toJSON(matrix) }}
         run: echo "$MATRIX_CONTEXT"
- 
-      -name PONG - Dispatch response to received PING
-        if github.event.action == 'ping'
-        run: |
-          curl -X POST https://api.github.com/repos/SKuhlmanns/steves-test-repo/dispatches \
-          -H 'Accept: application/vnd.github.everest-preview+json' \
-          -u ${{ secrets.KUHLMANNS_TOKEN }} \
-          --data '{"event_type": "pong", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
