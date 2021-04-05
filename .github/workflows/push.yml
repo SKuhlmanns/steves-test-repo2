@@ -39,7 +39,7 @@ jobs:
         uses: aochmann/actions-download-artifact@1.0.4
         with:
           # Optional, GitHub token
-          github_token: ${{secrets.KUHLMANNS_TOKEN}}
+          github_token: ${{ secrets.KUHLMANNS_TOKEN }}
 
           # Optional, uploaded artifact name,
           # will download all artifacts if not specified
