@@ -29,7 +29,7 @@ jobs:
       - name: Get branch or tag name from git reference
         run: |
           LIB_BRANCH_OR_TAG=`basename ${{ github.ref }}`
-          if [[ $LIB_BRANCH_OR_TAG == "COMM'* ]]; then
+          if [[ $LIB_BRANCH_OR_TAG == 'COMM'* ]]; then
             VERSION=`echo $LIB_BRANCH_OR_TAG | cut -d"_" -f2`
             LIB_BRANCH_OR_TAG="LIB_${VERSION}"
           fi
