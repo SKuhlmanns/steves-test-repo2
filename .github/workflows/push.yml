@@ -8,7 +8,8 @@ on:
       # Push events on release branches
       - 'release_v*'
     tags:
-      - LIB_*    # Push events matching refs/heads/LIB_* tags
+      - COMM_*    # Push events matching refs/heads/COMM_* tags
+  repository_dispatch:
 
 jobs:
 
@@ -19,6 +20,10 @@ jobs:
       PHASE_ID: x
 
     steps:
+      - name: Event Information
+        run: |
+          echo "Event '${{ github.event.action }}' received from '${{ github.event.client_payload.repository }}'"
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -28,8 +33,12 @@ jobs:
 
       - name: Get branch or tag name from git reference
         run: |
-          BRANCH_OR_TAG=`basename ${{ github.ref }}`
-          echo "BRANCH_OR_TAG=${BRANCH_OR_TAG}" >> $GITHUB_ENV
+          LIB_BRANCH_OR_TAG=`basename ${{ github.ref }}`
+          if [[ $LIB_BRANCH_OR_TAG == "COMM'* ]]; then
+            VERSION=`echo $LIB_BRANCH_OR_TAG | cut -d"_" -f2`
+            LIB_BRANCH_OR_TAG="LIB_${VERSION}"
+          fi
+          echo "LIB_BRANCH_OR_TAG=${LIB_BRANCH_OR_TAG}" >> $GITHUB_ENV
 
       - name: Download artifacts from steves-test-repo
         uses: aochmann/actions-download-artifact@1.0.4
@@ -41,7 +50,7 @@ jobs:
           # will download all artifacts if not specified
           # and extract them in respective subdirectories
           # https://github.com/actions/download-artifact#download-all-artifacts
-          name: version-num-${{ env.BRANCH_OR_TAG }}-txt
+          name: version-num-${{ env.LIB_BRANCH_OR_TAG }}-txt
 
           # Optional, download latest artifact
           latest: true
@@ -131,3 +140,11 @@ jobs:
         env:
           MATRIX_CONTEXT: ${{ toJSON(matrix) }}
         run: echo "$MATRIX_CONTEXT"
+ 
+      -name PONG - Dispatch response to received PING
+        if github.event.action == 'ping'
+        run: |
+          curl -X POST https://api.github.com/repos/SKuhlmanns/steves-test-repo/dispatches \
+          -H 'Accept: application/vnd.github.everest-preview+json' \
+          -u ${{ secrets.ACCESS_TOKEN }} \
+          --data '{"event_type": "pong", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
