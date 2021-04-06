@@ -96,7 +96,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: version-${{ env.BRANCH_OR_TAG }}-txt
+          name: version-${{ env.LIB_BRANCH_OR_TAG }}-txt
           path: |
             build/version.txt
 
@@ -104,7 +104,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: version-num-${{ env.BRANCH_OR_TAG }}-txt
+          name: version-num-${{ env.LIB_BRANCH_OR_TAG }}-txt
           path: |
             build/version_num.txt
       - name: Dump GitHub context
