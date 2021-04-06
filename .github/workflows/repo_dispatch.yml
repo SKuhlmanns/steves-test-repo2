@@ -15,6 +15,6 @@ jobs:
         if github.event.action == 'ping'
         run: |
           curl -X POST 'https://api.github.com/repos/SKuhlmanns/steves-test-repo/dispatches' \
-          -H 'Accept: application/vnd.github.everest-preview+json' \
+          -H 'Accept: application/vnd.github.v3+json' \
           -u "${{ secrets.KUHLMANNS_CURL_TOKEN }}" \
           --data '{"event_type": "pong", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
