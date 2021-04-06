@@ -43,6 +43,7 @@ jobs:
         run: |
           echo "BRANCH_OR_TAG: ${LIB_BRANCH_OR_TAG}
           echo "BRANCH_OR_TAG=${LIB_BRANCH_OR_TAG}" >> $GITHUB_ENV
+          git checkout ${LIB_BRANCH_OR_TAG}
 
       - name: Download artifacts from steves-test-repo
         uses: aochmann/actions-download-artifact@1.0.4
