@@ -28,20 +28,21 @@ jobs:
           mkdir -p builder
 
       - name: Set branch or tag name from git reference
-        if: github.event.action != 'downstream-trigger'
+        if: github.event.action != 'trigger'
         run: |
-          export LIB_BRANCH_OR_TAG=`basename ${{ github.ref }}`
-          if [[ $LIB_BRANCH_OR_TAG == 'COMM'* ]]; then
-            VERSION=`echo $LIB_BRANCH_OR_TAG | cut -d"_" -f2`
-            export LIB_BRANCH_OR_TAG="LIB_${VERSION}"
+          export BRANCH_OR_TAG=`basename ${{ github.ref }}`
+          if [[ $BRANCH_OR_TAG == 'COMM'* ]]; then
+            VERSION=`echo $BRANCH_OR_TAG | cut -d"_" -f2`
+            export BRANCH_OR_TAG="LIB_${VERSION}"
           fi
-          echo "LIB_BRANCH_OR_TAG=${LIB_BRANCH_OR_TAG}" >> $GITHUB_ENV
+          echo "BRANCH_OR_TAG: ${BRANCH_OR_TAG}"
+          echo "BRANCH_OR_TAG=${BRANCH_OR_TAG}" >> $GITHUB_ENV
 
       - name: Set branch or tag name from upstream trigger
-        if: github.event.action == 'downstream-trigger'
+        if: github.event.action == 'trigger'
         run: |
-          echo "LIB_BRANCH_OR_TAG: ${LIB_BRANCH_OR_TAG}
-          echo "LIB_BRANCH_OR_TAG=${LIB_BRANCH_OR_TAG}" >> $GITHUB_ENV
+          echo "BRANCH_OR_TAG: ${LIB_BRANCH_OR_TAG}
+          echo "BRANCH_OR_TAG=${LIB_BRANCH_OR_TAG}" >> $GITHUB_ENV
 
       - name: Download artifacts from steves-test-repo
         uses: aochmann/actions-download-artifact@1.0.4
@@ -53,7 +54,7 @@ jobs:
           # will download all artifacts if not specified
           # and extract them in respective subdirectories
           # https://github.com/actions/download-artifact#download-all-artifacts
-          name: version-num-${{ env.LIB_BRANCH_OR_TAG }}-txt
+          name: version-num-${{ env.BRANCH_OR_TAG }}-txt
 
           # Optional, download latest artifact
           latest: true
@@ -103,7 +104,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: version-${{ env.LIB_BRANCH_OR_TAG }}-txt
+          name: version-${{ env.BRANCH_OR_TAG }}-txt
           path: |
             build/version.txt
 
@@ -111,7 +112,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: version-num-${{ env.LIB_BRANCH_OR_TAG }}-txt
+          name: version-num-${{ env.BRANCH_OR_TAG }}-txt
           path: |
             build/version_num.txt
       - name: Dump GitHub context
