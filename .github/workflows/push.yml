@@ -28,12 +28,15 @@ jobs:
           mkdir -p builder
 
       - name: Get branch or tag name from git reference
+        if: github.event.action != 'downstream-trigger'
         run: |
-          LIB_BRANCH_OR_TAG=`basename ${{ github.ref }}`
+          export LIB_BRANCH_OR_TAG=`basename ${{ github.ref }}`
           if [[ $LIB_BRANCH_OR_TAG == 'COMM'* ]]; then
             VERSION=`echo $LIB_BRANCH_OR_TAG | cut -d"_" -f2`
-            LIB_BRANCH_OR_TAG="LIB_${VERSION}"
+            export LIB_BRANCH_OR_TAG="LIB_${VERSION}"
           fi
+
+      - name: Set branch or tag name
           echo "LIB_BRANCH_OR_TAG=${LIB_BRANCH_OR_TAG}" >> $GITHUB_ENV
 
       - name: Download artifacts from steves-test-repo
