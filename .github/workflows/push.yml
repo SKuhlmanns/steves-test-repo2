@@ -20,8 +20,15 @@ jobs:
       PHASE_ID: x
 
     steps:
+        if: github.event.action != 'trigger'
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Checkout triggered branch
+        if: github.event.action == 'trigger'
+        uses: actions/checkout@v2
+        with:
+          rev: ${{ github.event.client_payload.LIB_BRANCH_OR_TAG }}
 
       - name: Make builder directory
         run: |
@@ -42,8 +49,8 @@ jobs:
         if: github.event.action == 'trigger'
         run: |
           echo "BRANCH_OR_TAG: ${{ github.event.client_payload.LIB_BRANCH_OR_TAG }}"
+          BRANCH_OR_TAG=${{ github.event.client_payload.LIB_BRANCH_OR_TAG }} 
           echo "BRANCH_OR_TAG=${{ github.event.client_payload.LIB_BRANCH_OR_TAG }}" >> GITHUB_ENV
-          git checkout ${{ github.event.client_payload.LIB_BRANCH_OR_TAG }}
 
       - name: Download artifacts from steves-test-repo
         uses: aochmann/actions-download-artifact@1.0.4
