@@ -30,10 +30,10 @@ jobs:
       - name: Set branch or tag name from git reference
         if: github.event.action != 'trigger'
         run: |
-          export BRANCH_OR_TAG=`basename ${{ github.ref }}`
+          BRANCH_OR_TAG=`basename ${{ github.ref }}`
           if [[ $BRANCH_OR_TAG == 'COMM'* ]]; then
             VERSION=`echo $BRANCH_OR_TAG | cut -d"_" -f2`
-            export BRANCH_OR_TAG="LIB_${VERSION}"
+            BRANCH_OR_TAG="LIB_${VERSION}"
           fi
           echo "BRANCH_OR_TAG: ${BRANCH_OR_TAG}"
           echo "BRANCH_OR_TAG=${BRANCH_OR_TAG}" >> $GITHUB_ENV
@@ -41,9 +41,9 @@ jobs:
       - name: Set branch or tag name from upstream trigger
         if: github.event.action == 'trigger'
         run: |
-          echo "BRANCH_OR_TAG: ${LIB_BRANCH_OR_TAG}"
-          echo "BRANCH_OR_TAG=${LIB_BRANCH_OR_TAG}" >> $GITHUB_ENV
-          git checkout ${LIB_BRANCH_OR_TAG}
+          echo "BRANCH_OR_TAG: ${{ github.event.client_payload.repository.LIB_BRANCH_OR_TAG }}"
+          echo "BRANCH_OR_TAG=${{ github.event.client_payload.repository.LIB_BRANCH_OR_TAG }}" >> GITHUB_ENV
+          git checkout ${{ env.BRANCH_OR_TAG }}
 
       - name: Download artifacts from steves-test-repo
         uses: aochmann/actions-download-artifact@1.0.4
