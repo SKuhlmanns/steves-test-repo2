@@ -79,6 +79,16 @@ jobs:
           ls -l
           cat *.txt
 
+      - name: Setup build environment for triggered branches
+        if: github.event.action == 'trigger'
+        run: |
+          echo "PHASE ID: ${PHASE_ID}"
+          echo "BUILD NUMBER: ${BUILD_NUMBER}"
+          if [[ $BRANCH_OR_TAG == 'release_v'* ]]; then
+            echo "Setting PHASE ID to b"
+            echo "PHASE_ID=b" >> $GITHUB_ENV
+          fi
+
       - name: Setup build environment for release branches
         if: contains(github.ref,'refs/heads/release_v')
         run: |
@@ -128,10 +138,10 @@ jobs:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: echo "$GITHUB_CONTEXT"
 
-      - name: Dump job context
-        env:
-          JOB_CONTEXT: ${{ toJSON(job) }}
-        run: echo "$JOB_CONTEXT"
+#      - name: Dump job context
+#        env:
+#          JOB_CONTEXT: ${{ toJSON(job) }}
+#        run: echo "$JOB_CONTEXT"
 
       - name: Dump steps context
         env:
@@ -153,9 +163,9 @@ jobs:
           MATRIX_CONTEXT: ${{ toJSON(matrix) }}
         run: echo "$MATRIX_CONTEXT"
 
-      - name: Event Information
-        run: |
-          echo "Event '${{ github.event.action }}' received from '${{ github.event.client_payload.repository }}'"
+#      - name: Event Information
+#        run: |
+#          echo "Event '${{ github.event.action }}' received from '${{ github.event.client_payload.repository }}'"
 
 #      - name: PONG - Dispatch response to received PING
 #        if: github.event.action == 'ping'
