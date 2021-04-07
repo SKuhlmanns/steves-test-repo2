@@ -28,7 +28,7 @@ jobs:
         if: github.event.action == 'trigger'
         uses: actions/checkout@v2
         with:
-          rev: ${{ github.event.client_payload.LIB_BRANCH_OR_TAG }}
+          ref: ${{ github.event.client_payload.LIB_BRANCH_OR_TAG }}
 
       - name: Make builder directory
         run: |
