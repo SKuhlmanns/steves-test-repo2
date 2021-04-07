@@ -20,8 +20,8 @@ jobs:
       PHASE_ID: x
 
     steps:
-        if: github.event.action != 'trigger'
       - name: Checkout code
+        if: github.event.action != 'trigger'
         uses: actions/checkout@v2
 
       - name: Checkout triggered branch
