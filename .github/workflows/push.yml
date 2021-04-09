@@ -20,6 +20,9 @@ jobs:
       PHASE_ID: x
 
     steps:
+      - name: Display repo
+        run: echo ${{ github.ref }}
+
       - name: Checkout code
         if: github.event.action != 'trigger'
         uses: actions/checkout@v2
