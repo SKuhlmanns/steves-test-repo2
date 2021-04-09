@@ -7,22 +7,27 @@ on:
       - develop
       # Push events on release branches
       - 'release_v*'
+      - 'release/release_v*'
+      - 'feature/**'
     tags:
       - COMM_*    # Push events matching refs/heads/COMM_* tags
   repository_dispatch:
+  workflow_dispatch:
+env:
+  DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }}
 
 jobs:
 
-  build-linux:
+  linux-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       BUILD_NUMBER: ${{ github.run_number }}
       PHASE_ID: x
+    outputs:
+      BRANCH_OR_TAG: ${{ steps.branchname.outputs.branch_or_tag }}
 
     steps:
-      - name: Display repo
-        run: echo ${{ github.ref }}
-
       - name: Checkout code
         if: github.event.action != 'trigger'
         uses: actions/checkout@v2
@@ -136,44 +141,57 @@ jobs:
           name: version-num-${{ env.BRANCH_OR_TAG }}-txt
           path: |
             build/version_num.txt
-      - name: Dump GitHub context
+
+      - name: Dump context
+        if: ${{ env.DISPLAY_CONTEXT == 'true' }}
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
-
-#      - name: Dump job context
-#        env:
-#          JOB_CONTEXT: ${{ toJSON(job) }}
-#        run: echo "$JOB_CONTEXT"
-
-      - name: Dump steps context
-        env:
+          JOB_CONTEXT: ${{ toJSON(job) }}
           STEPS_CONTEXT: ${{ toJSON(steps) }}
-        run: echo "$STEPS_CONTEXT"
+        run: |
+          echo "GITHUB CONTEXT:"
+          echo
+          echo "$GITHUB_CONTEXT"
+          echo
+          echo "JOB CONTEXT:"
+          echo
+          echo "$JOB_CONTEXT"
+          echo
+          echo "STEPS CONTEXT:"
+          echo
+          echo "$STEPS_CONTEXT"
 
-      - name: Dump runner context
-        env:
-          RUNNER_CONTEXT: ${{ toJSON(runner) }}
-        run: echo "$RUNNER_CONTEXT"
-
-      - name: Dump strategy context
-        env:
-          STRATEGY_CONTEXT: ${{ toJSON(strategy) }}
-        run: echo "$STRATEGY_CONTEXT"
-
-      - name: Dump matrix context
-        env:
-          MATRIX_CONTEXT: ${{ toJSON(matrix) }}
-        run: echo "$MATRIX_CONTEXT"
-
-#      - name: Event Information
+#  linux-trigger:
+#    needs: linux-build
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Trigger - steves-test-repo3 event
 #        run: |
-#          echo "Event '${{ github.event.action }}' received from '${{ github.event.client_payload.repository }}'"
-
-#      - name: PONG - Dispatch response to received PING
-#        if: github.event.action == 'ping'
-#        run: |
-#          curl -X POST 'https://api.github.com/repos/SKuhlmanns/steves-test-repo/dispatches' \
+#          curl -X POST https://api.github.com/repos/SKuhlmanns/steves-test-repo3/dispatches \
 #          -H 'Accept: application/vnd.github.v3+json' \
-#          -u "${{ secrets.KUHLMANNS_TOKEN }}" \
-#          --data '{"event_type": "pong", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
+#          -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} \
+#          -d '{"event_type": "trigger",
+#                "client_payload": {
+#                  "ref": "${{ github.ref }}",
+#                  "LIB_BRANCH_OR_TAG": "'"${{needs.linux-build.outputs.BRANCH_OR_TAG}}"'"
+#                }
+#              }'
+#
+#      - name: Dump context
+#        if: ${{ env.DISPLAY_CONTEXT == 'true' }}
+#        env:
+#          GITHUB_CONTEXT: ${{ toJSON(github) }}
+#          JOB_CONTEXT: ${{ toJSON(job) }}
+#          STEPS_CONTEXT: ${{ toJSON(steps) }}
+#        run: |
+#          echo "GITHUB CONTEXT:"
+#          echo
+#          echo "$GITHUB_CONTEXT"
+#          echo
+#          echo "JOB CONTEXT:"
+#          echo
+#          echo "$JOB_CONTEXT"
+#          echo
+#          echo "STEPS CONTEXT:"
+#          echo
+#          echo "$STEPS_CONTEXT"
