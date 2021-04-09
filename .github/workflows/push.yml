@@ -11,7 +11,7 @@ on:
       - 'feature/**'
     tags:
       - COMM_*    # Push events matching refs/heads/COMM_* tags
-  repository_dispatch:
+#  repository_dispatch:
   workflow_dispatch:
 env:
   DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }}
@@ -32,11 +32,11 @@ jobs:
         if: github.event.action != 'trigger'
         uses: actions/checkout@v2
 
-      - name: Checkout triggered branch
-        if: github.event.action == 'trigger'
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.client_payload.LIB_BRANCH_OR_TAG }}
+#      - name: Checkout triggered branch
+#        if: github.event.action == 'trigger'
+#        uses: actions/checkout@v2
+#        with:
+#          ref: ${{ github.event.client_payload.LIB_BRANCH_OR_TAG }}
 
       - name: Make builder directory
         run: |
