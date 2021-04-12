@@ -21,7 +21,46 @@ jobs:
         run: |
           mkdir -p builder
 
-      - name: Download artifacts from steves-test-repo
+      # Use this to help debug issues
+      - name: Dump context
+        # See Settings -> Secrets to turn this step on and off
+        if: ${{ env.DISPLAY_CONTEXT == 'true' }}
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+          JOB_CONTEXT: ${{ toJSON(job) }}
+          STEPS_CONTEXT: ${{ toJSON(steps) }}
+        run: |
+          echo "GITHUB CONTEXT:"
+          echo
+          echo "$GITHUB_CONTEXT"
+          echo
+          echo "JOB CONTEXT:"
+          echo
+          echo "$JOB_CONTEXT"
+          echo
+          echo "STEPS CONTEXT:"
+          echo
+          echo "$STEPS_CONTEXT"
+     
+      # Check to see if the libraries feature branch (head_ref) exists.
+      # If not, use the target branch (base_ref).
+      - name: Get libraries branch 
+        run: |
+          curl -sfH "Accept: application/vnd.github.v3+json" \
+          -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} \
+          https://api.github.com/repos/SKuhlmanns/steves-test-repo/branches/${{ github.head_ref }} > /dev/null
+          ERROR_CODE=$?
+          echo "ERROR CODE: ${ERROR_CODE}"
+          if [[ "${ERROR_CODE}" == "0" ]]; then
+            echo "LIB_BRANCH=${{ github.head_ref }}" 
+            echo "LIB_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV 
+          else
+            echo "LIB_BRANCH=${{ github.base_ref }}" 
+            echo "LIB_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV 
+          fi
+
+      - name: Download libraries artifacts
+        if: ${{ success() }}
         uses: aochmann/actions-download-artifact@1.0.4
         with:
           # Optional, GitHub token
@@ -31,7 +70,7 @@ jobs:
           # will download all artifacts if not specified
           # and extract them in respective subdirectories
           # https://github.com/actions/download-artifact#download-all-artifacts
-          name: version-num-${{ github.base_ref }}-txt
+          name: version-num-${{ env.LIB_BRANCH }}-txt
 
           # Optional, download latest artifact
           latest: true
@@ -63,8 +102,8 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          #name: version-${{ github.head_ref }}-txt
-          name: version-txt
+          name: version-${{ github.head_ref }}-txt
+          #name: version-txt
           path: |
             build/version.txt
 
@@ -72,26 +111,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          #name: version-num-${{ github.head_ref }}-txt
-          name: version-num-txt
+          name: version-num-${{ github.head_ref }}-txt
+          #name: version-num-txt
           path: |
             build/version_num.txt
-
-      - name: Dump context
-        if: ${{ env.DISPLAY_CONTEXT == 'true' }}
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-          JOB_CONTEXT: ${{ toJSON(job) }}
-          STEPS_CONTEXT: ${{ toJSON(steps) }}
-        run: |
-          echo "GITHUB CONTEXT:"
-          echo
-          echo "$GITHUB_CONTEXT"
-          echo
-          echo "JOB CONTEXT:"
-          echo
-          echo "$JOB_CONTEXT"
-          echo
-          echo "STEPS CONTEXT:"
-          echo
-          echo "$STEPS_CONTEXT"
