@@ -9,9 +9,11 @@ on:
       - 'release_v*'
       - 'release/release_v*'
       - 'feature/**'
+      - 'feature*'
     tags:
       - COMM_*    # Push events matching refs/heads/COMM_* tags
   workflow_dispatch:
+  create:
 env:
   DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }}
 
