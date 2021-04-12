@@ -13,7 +13,7 @@ on:
     tags:
       - COMM_*    # Push events matching refs/heads/COMM_* tags
   workflow_dispatch:
-  create:
+#  create: Not needed because the push event is triggered
 env:
   DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }}
 
