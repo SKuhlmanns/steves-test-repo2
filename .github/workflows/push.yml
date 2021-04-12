@@ -11,7 +11,6 @@ on:
       - 'feature/**'
     tags:
       - COMM_*    # Push events matching refs/heads/COMM_* tags
-#  repository_dispatch:
   workflow_dispatch:
 env:
   DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }}
@@ -24,12 +23,12 @@ jobs:
     env:
       BUILD_NUMBER: ${{ github.run_number }}
       PHASE_ID: x
-    outputs:
-      BRANCH_OR_TAG: ${{ steps.branchname.outputs.branch_or_tag }}
+#    outputs:
+#      BRANCH_OR_TAG: ${{ steps.branchname.outputs.branch_or_tag }}
 
     steps:
       - name: Checkout code
-        if: github.event.action != 'trigger'
+#        if: github.event.action != 'trigger'
         uses: actions/checkout@v2
 
 #      - name: Checkout triggered branch
@@ -43,7 +42,7 @@ jobs:
           mkdir -p builder
 
       - name: Set branch or tag name from git reference
-        if: github.event.action != 'trigger'
+#        if: github.event.action != 'trigger'
         run: |
           BRANCH_OR_TAG=`basename ${{ github.ref }}`
           if [[ $BRANCH_OR_TAG == 'COMM'* ]]; then
@@ -53,12 +52,12 @@ jobs:
           echo "BRANCH_OR_TAG: ${BRANCH_OR_TAG}"
           echo "BRANCH_OR_TAG=${BRANCH_OR_TAG}" >> $GITHUB_ENV
 
-      - name: Set branch or tag name from upstream trigger
-        if: github.event.action == 'trigger'
-        run: |
-          echo "BRANCH_OR_TAG: ${{ github.event.client_payload.LIB_BRANCH_OR_TAG }}"
-          BRANCH_OR_TAG=${{ github.event.client_payload.LIB_BRANCH_OR_TAG }} 
-          echo "BRANCH_OR_TAG=${BRANCH_OR_TAG}" >> $GITHUB_ENV
+#      - name: Set branch or tag name from upstream trigger
+#        if: github.event.action == 'trigger'
+#        run: |
+#          echo "BRANCH_OR_TAG: ${{ github.event.client_payload.LIB_BRANCH_OR_TAG }}"
+#          BRANCH_OR_TAG=${{ github.event.client_payload.LIB_BRANCH_OR_TAG }} 
+#          echo "BRANCH_OR_TAG=${BRANCH_OR_TAG}" >> $GITHUB_ENV
 
       - name: Download artifacts from steves-test-repo
         uses: aochmann/actions-download-artifact@1.0.4
@@ -87,15 +86,23 @@ jobs:
           ls -l
           cat *.txt
 
-      - name: Setup build environment for triggered branches
-        if: github.event.action == 'trigger'
+#      - name: Setup build environment for triggered branches
+#        if: github.event.action == 'trigger'
+#        run: |
+#          echo "PHASE ID: ${PHASE_ID}"
+#          echo "BUILD NUMBER: ${BUILD_NUMBER}"
+#          if [[ $BRANCH_OR_TAG == 'release_v'* ]]; then
+#            echo "Setting PHASE ID to b"
+#            echo "PHASE_ID=b" >> $GITHUB_ENV
+#          fi
+
+      - name: Setup build environment for feature branches
+        if: contains(github.ref,'refs/heads/feature')
         run: |
           echo "PHASE ID: ${PHASE_ID}"
           echo "BUILD NUMBER: ${BUILD_NUMBER}"
-          if [[ $BRANCH_OR_TAG == 'release_v'* ]]; then
-            echo "Setting PHASE ID to b"
-            echo "PHASE_ID=b" >> $GITHUB_ENV
-          fi
+          echo "Setting PHASE ID to f"
+          echo "PHASE_ID=b" >> $GITHUB_ENV
 
       - name: Setup build environment for release branches
         if: contains(github.ref,'refs/heads/release_v')
@@ -167,15 +174,10 @@ jobs:
 #    steps:
 #      - name: Trigger - steves-test-repo3 event
 #        run: |
-#          curl -X POST https://api.github.com/repos/SKuhlmanns/steves-test-repo3/dispatches \
+#          curl -X POST https://api.github.com/repos/SKuhlmanns/steves-test-repo3/actions/workflows/push.yml/dispatches \
 #          -H 'Accept: application/vnd.github.v3+json' \
 #          -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} \
-#          -d '{"event_type": "trigger",
-#                "client_payload": {
-#                  "ref": "${{ github.ref }}",
-#                  "LIB_BRANCH_OR_TAG": "'"${{needs.linux-build.outputs.BRANCH_OR_TAG}}"'"
-#                }
-#              }'
+#          -d '{"ref":"${{ github.ref }}"}'
 #
 #      - name: Dump context
 #        if: ${{ env.DISPLAY_CONTEXT == 'true' }}
