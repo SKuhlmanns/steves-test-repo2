@@ -21,6 +21,12 @@ jobs:
         run: |
           mkdir -p builder
 
+      - name: Set branch from git reference
+        run: |
+          BRANCH_NAME=`echo ${{ github.head_ref }} | tr "/" "-"`
+          echo "BRANCH_NAME: ${BRANCH_NAME}"
+          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
+
       # Use this to help debug issues
       - name: Dump context
         # See Settings -> Secrets to turn this step on and off
@@ -41,23 +47,24 @@ jobs:
           echo "STEPS CONTEXT:"
           echo
           echo "$STEPS_CONTEXT"
-     
+
       # Check to see if the libraries feature branch (head_ref) exists.
       # If not, use the target branch (base_ref).
       - name: Get libraries branch 
         run: |
-          curl -sfH "Accept: application/vnd.github.v3+json" \
-          -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} \
-          https://api.github.com/repos/SKuhlmanns/steves-test-repo/branches/${{ github.head_ref }} > /dev/null
-          ERROR_CODE=$?
-          echo "ERROR CODE: ${ERROR_CODE}"
-          if [[ "${ERROR_CODE}" == "0" ]]; then
-            echo "LIB_BRANCH=${{ github.head_ref }}" 
-            echo "LIB_BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV 
+          curl -sH "Accept: application/vnd.github.v3+json" \
+          -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} -o curl_output.txt \
+          https://api.github.com/repos/SKuhlmanns/steves-test-repo/branches/${{ github.head_ref }}
+          if grep -q "Branch not found" curl_output.txt; then
+            LIB_BRANCH=`echo ${{ github.base_ref }} | tr "/" "-"`
+            echo "LIB_BRANCH=${LIB_BRANCH}" 
+            echo "LIB_BRANCH=${LIB_BRANCH}" >> $GITHUB_ENV 
           else
-            echo "LIB_BRANCH=${{ github.base_ref }}" 
-            echo "LIB_BRANCH=${{ github.base_ref }}" >> $GITHUB_ENV 
+            LIB_BRANCH=`echo ${{ github.head_ref }} | tr "/" "-"`
+            echo "LIB_BRANCH=${LIB_BRANCH}" 
+            echo "LIB_BRANCH=${LIB_BRANCH}" >> $GITHUB_ENV 
           fi
+          rm -f curl_output.txt
 
       - name: Download libraries artifacts
         if: ${{ success() }}
@@ -102,8 +109,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: version-${{ github.head_ref }}-txt
-          #name: version-txt
+          name: version-${{ env.BRANCH_NAME }}-txt
           path: |
             build/version.txt
 
@@ -111,7 +117,6 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: version-num-${{ github.head_ref }}-txt
-          #name: version-num-txt
+          name: version-num-${{ env.BRANCH_NAME }}-txt
           path: |
             build/version_num.txt
