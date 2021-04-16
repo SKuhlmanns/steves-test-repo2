@@ -7,3 +7,4 @@
 - Edgar's second change
 - Steve' change
 - Feature two test 1
+- Feature four test 1
