@@ -10,7 +10,7 @@ on:
       - 'release/release_v*'
     tags:
       - COMM_*    # Push events matching refs/heads/COMM_* tags
-#  workflow_dispatch:
+  workflow_dispatch:
 #  create: Not needed because the push event is triggered
 env:
   DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }} # To display github context for debugging
