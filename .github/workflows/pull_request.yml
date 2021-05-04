@@ -4,8 +4,8 @@ on:
   pull_request:
     branches:
       - '**'      # Pull request events matching any branch name
-    tags:
-      - COMM_*    # Pull request events matching refs/heads/COMM_* tags
+#    tags:
+#      - COMM_*    # Pull request events matching refs/heads/COMM_* tags
   workflow_dispatch:
 env:
   DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }} # To display github context for debugging
