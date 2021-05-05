@@ -1,17 +1,14 @@
-name: Build develop and release branches
+name: Build tagged releases
 
 on: 
   push:
-    branches:
-      # Push events on develop branch
-      - develop
-      # Push events on release branches
-      - 'release_v*'
-      - 'release/release_v*'
-  workflow_dispatch:    # Used to trigger from parent projects
+    tags:
+      - COMM_*    # Push events matching refs/heads/COMM_* tags
+      - NOVOS_*   # Push events matching refs/heads/NOVOS_* tags
+  workflow_dispatch:
 
 env:
-  DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }}    # To display github context for debugging
+  DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }} # To display github context for debugging
 
 jobs:
 
@@ -51,7 +48,7 @@ jobs:
           echo
           echo "$STEPS_CONTEXT"
 
-      - name: Set branch or tag name from github reference
+      - name: Set branch or tag name from git reference
         run: |
           BRANCH_OR_TAG=`basename ${{ github.ref }}`
           if [[ $BRANCH_OR_TAG == 'COMM'* ]]; then
@@ -88,29 +85,21 @@ jobs:
           ls -l
           cat *.txt
 
-      - name: Setup build environment for feature branches
-        if: contains(github.ref,'feature')
+      - name: Setup build environment for release tags
+        if: contains(github.ref,'refs/tags/LIB')
         run: |
           echo "PHASE ID: ${PHASE_ID}"
           echo "BUILD NUMBER: ${BUILD_NUMBER}"
-          echo "Setting PHASE ID to f"
-          echo "PHASE_ID=b" >> $GITHUB_ENV
+          echo "Setting PHASE ID to blank"
+          echo "PHASE_ID=" >> $GITHUB_ENV
 
-      - name: Setup build environment for release branches
-        if: contains(github.ref,'release_v')
+      - name: Setup build environment for release tags
+        if: contains(github.ref,'refs/tags/NOVOS')
         run: |
           echo "PHASE ID: ${PHASE_ID}"
           echo "BUILD NUMBER: ${BUILD_NUMBER}"
-          echo "Setting PHASE ID to b"
-          echo "PHASE_ID=b" >> $GITHUB_ENV
-
-#      - name: Setup build environment for release tags
-#        if: contains(github.ref,'refs/tags/LIB')
-#        run: |
-#          echo "PHASE ID: ${PHASE_ID}"
-#          echo "BUILD NUMBER: ${BUILD_NUMBER}"
-#          echo "Setting PHASE ID to blank"
-#          echo "PHASE_ID=" >> $GITHUB_ENV
+          echo "Setting PHASE ID to blank"
+          echo "PHASE_ID=" >> $GITHUB_ENV
 
       - name: Build the application
         working-directory: build
@@ -140,14 +129,3 @@ jobs:
           name: version-num-${{ env.BRANCH_OR_TAG }}-txt
           path: |
             build/version_num.txt
-
-#  linux-trigger:
-#    needs: linux-build
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Trigger - steves-test-repo3 event
-#        run: |
-#          curl -X POST https://api.github.com/repos/SKuhlmanns/steves-test-repo3/actions/workflows/push.yml/dispatches \
-#          -H 'Accept: application/vnd.github.v3+json' \
-#          -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} \
-#          -d '{"ref":"${{ github.ref }}"}'
