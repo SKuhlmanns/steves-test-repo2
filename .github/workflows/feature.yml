@@ -4,7 +4,8 @@ on:
   push:
     branches:
       # Push events on feature branches
-      - 'feature*'
+      - 'feature/**'
+      - '*feature*'
   workflow_dispatch:    # Used to trigger from parent projects
 
 env:
