@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 30
     env:
       BUILD_NUMBER: ${{ github.run_number }}
-      PHASE_ID: x
+      PHASE_ID: 
 
     steps:
       - name: Checkout code
@@ -84,22 +84,24 @@ jobs:
         run: |
           ls -l
           cat *.txt
-
-      - name: Setup build environment for release tags
-        if: contains(github.ref,'refs/tags/LIB')
-        run: |
           echo "PHASE ID: ${PHASE_ID}"
           echo "BUILD NUMBER: ${BUILD_NUMBER}"
-          echo "Setting PHASE ID to blank"
-          echo "PHASE_ID=" >> $GITHUB_ENV
 
-      - name: Setup build environment for release tags
-        if: contains(github.ref,'refs/tags/NOVOS')
-        run: |
-          echo "PHASE ID: ${PHASE_ID}"
-          echo "BUILD NUMBER: ${BUILD_NUMBER}"
-          echo "Setting PHASE ID to blank"
-          echo "PHASE_ID=" >> $GITHUB_ENV
+#      - name: Setup build environment for release tags
+#        if: contains(github.ref,'refs/tags/LIB')
+#        run: |
+#          echo "PHASE ID: ${PHASE_ID}"
+#          echo "BUILD NUMBER: ${BUILD_NUMBER}"
+#          echo "Setting PHASE ID to blank"
+#          echo "PHASE_ID=" >> $GITHUB_ENV
+
+#      - name: Setup build environment for release tags
+#        if: contains(github.ref,'refs/tags/NOVOS')
+#        run: |
+#          echo "PHASE ID: ${PHASE_ID}"
+#          echo "BUILD NUMBER: ${BUILD_NUMBER}"
+#          echo "Setting PHASE ID to blank"
+#          echo "PHASE_ID=" >> $GITHUB_ENV
 
       - name: Build the application
         working-directory: build

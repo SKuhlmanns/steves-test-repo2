@@ -1,10 +1,10 @@
-name: Build develop branch
+name: Build feature branches
 
 on: 
   push:
     branches:
-      # Push events on develop branch
-      - develop
+      # Push events on feature branches
+      - 'feature*'
   workflow_dispatch:    # Used to trigger from parent projects
 
 env:
@@ -17,8 +17,8 @@ jobs:
     timeout-minutes: 30
     env:
       BUILD_NUMBER: ${{ github.run_number }}
-      PHASE_ID: x
-      CHILD_YAML: push.yml
+      PHASE_ID: f
+      CHILD_YAML: feature.yml
 
     steps:
       - name: Checkout code
@@ -117,7 +117,7 @@ jobs:
           path: |
             build/version_num.txt
 
-#  linux-trigger:
+#  linux-triggers:
 #    needs: linux-build
 #    runs-on: ubuntu-latest
 #    steps:

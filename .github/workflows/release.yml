@@ -1,10 +1,11 @@
-name: Build develop branch
+name: Build release branches
 
 on: 
   push:
     branches:
-      # Push events on develop branch
-      - develop
+      # Push events on release branches
+      - 'release_v*'
+      - 'release/release_v*'
   workflow_dispatch:    # Used to trigger from parent projects
 
 env:
@@ -17,8 +18,8 @@ jobs:
     timeout-minutes: 30
     env:
       BUILD_NUMBER: ${{ github.run_number }}
-      PHASE_ID: x
-      CHILD_YAML: push.yml
+      PHASE_ID: b
+      CHILD_YAML: release.yml
 
     steps:
       - name: Checkout code
