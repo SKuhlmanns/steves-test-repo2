@@ -133,6 +133,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: version-${{ env.BRANCH_NAME }}-txt
+          retention-days: 14
           path: |
             build/version.txt
 
@@ -141,5 +142,6 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: version-num-${{ env.BRANCH_NAME }}-txt
+          retention-days: 14
           path: |
             build/version_num.txt

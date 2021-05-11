@@ -126,6 +126,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: version-${{ env.BRANCH_OR_TAG }}-txt
+          retention-days: 90
           path: |
             build/version.txt
 
@@ -134,6 +135,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: version-num-${{ env.BRANCH_OR_TAG }}-txt
+          retention-days: 90
           path: |
             build/version_num.txt
 
@@ -142,6 +144,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: run_id-${{ env.BRANCH_OR_TAG }}.txt
+          retention-days: 90
           path: |
             build/run_id-${{ env.BRANCH_OR_TAG }}.txt
 
