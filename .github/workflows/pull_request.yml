@@ -116,6 +116,7 @@ jobs:
         working-directory: builder
         run: |
           ls -l
+          cat version_num.txt
 
       - name: Build the application
         working-directory: build

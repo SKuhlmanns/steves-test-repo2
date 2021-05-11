@@ -104,6 +104,7 @@ jobs:
         working-directory: builder
         run: |
           ls -l
+          cat version_num.txt
           echo "PHASE ID: ${PHASE_ID}"
           echo "BUILD NUMBER: ${BUILD_NUMBER}"
 
