@@ -98,7 +98,7 @@ jobs:
           curl -H "Authorization: token ${{ secrets.KUHLMANNS_TOKEN }}" -sL \
           https://api.github.com/repos/SKuhlmanns/steves-test-repo/actions/runs/${run_id}/artifacts \
           -o artifacts.txt
-          #cat artifacts.txt
+          cat artifacts.txt
           cat artifacts.txt | grep '"name":' | cut -d'"' -f4 > name.txt
           cat artifacts.txt | grep '"id":' | cut -d':' -f2 | cut -d"," -f1 > id.txt
           paste -d "" name.txt id.txt > artifacts.lst
@@ -107,7 +107,7 @@ jobs:
           while IFS= read -r line; do
             filename=`echo $line | cut -d" " -f1`
             artifact_id=`echo $line | cut -d" " -f2`
-            if [[ "${filename}" != "run_id-${{ env.BRANCH_OR_TAG }}.txt" ]]; then 
+            if [[ "${filename}" != *"run_id-${{ env.BRANCH_OR_TAG }}.txt"* ]]; then 
               curl -H "Authorization: token ${{ secrets.KUHLMANNS_TOKEN }}" -sLJO \
               https://api.github.com/repos/SKuhlmanns/steves-test-repo/actions/artifacts/${artifact_id}/zip
               unzip ${filename}.zip
