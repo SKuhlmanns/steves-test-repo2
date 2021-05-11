@@ -107,10 +107,10 @@ jobs:
           while IFS= read -r line; do
             filename=`echo $line | cut -d" " -f1`
             artifact_id=`echo $line | cut -d" " -f2`
-            curl -H "Authorization: token ${{ secrets.KUHLMANNS_TOKEN }}" -sLJO \
-            https://api.github.com/repos/SKuhlmanns/steves-test-repo/actions/artifacts/${artifact_id}/zip
-            unzip ${filename}.zip
-            rm ${filename}.zip
+            #curl -H "Authorization: token ${{ secrets.KUHLMANNS_TOKEN }}" -sLJO \
+            echo https://api.github.com/repos/SKuhlmanns/steves-test-repo/actions/artifacts/${artifact_id}/zip
+            #unzip ${filename}.zip
+            #rm ${filename}.zip
           done < artifacts.lst
 
       - name: Display contents
