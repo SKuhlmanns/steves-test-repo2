@@ -93,6 +93,7 @@ jobs:
       - name: Get artifacts
         working-directory: builder
         run: |
+          ls -l
           cat run_id-${{ env.BRANCH_OR_TAG }}.txt
           run_id=`cat run_id-${{ env.BRANCH_OR_TAG }}.txt`
           curl -H "Authorization: token ${{ secrets.KUHLMANNS_TOKEN }}" -vL \
