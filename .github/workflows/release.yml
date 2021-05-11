@@ -94,7 +94,7 @@ jobs:
         working-directory: builder
         run: |
           cat run_id-${{ env.BRANCH_OR_TAG }}.txt
-          run_id=`cat run_id-${{ env.BRANCH_OR_TAG }}.txt`
+          rm run_id-${{ env.BRANCH_OR_TAG }}.txt
           curl -H "Authorization: token ${{ secrets.KUHLMANNS_TOKEN }}" -svL \
           https://api.github.com/repos/SKuhlmanns/steves-test-repo/actions/runs/${run_id}/artifacts \
           -o artifacts.txt
@@ -107,9 +107,12 @@ jobs:
           while IFS= read -r line; do
             filename=`echo $line | cut -d" " -f1`
             artifact_id=`echo $line | cut -d" " -f2`
-            curl -H "Authorization: token ${{ secrets.KUHLMANNS_TOKEN }}" -sLJO https://api.github.com/repos/SKuhlmanns/steves-test-repo/actions/artifacts/${artifact_id}/zip
-            #unzip ${filename}.zip
-            #rm ${filename}.zip
+            if [[ "${filename}" != "run_id-${{ env.BRANCH_OR_TAG }}.txt" ]]; then 
+              curl -H "Authorization: token ${{ secrets.KUHLMANNS_TOKEN }}" -sLJO \
+              https://api.github.com/repos/SKuhlmanns/steves-test-repo/actions/artifacts/${artifact_id}/zip
+              unzip ${filename}.zip
+              rm ${filename}.zip
+            fi
           done < artifacts.lst
           ls -l
 
