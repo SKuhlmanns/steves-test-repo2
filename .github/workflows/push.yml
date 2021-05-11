@@ -84,7 +84,7 @@ jobs:
         uses: aochmann/actions-download-artifact@1.0.4
         with:
           github_token: ${{ secrets.KUHLMANNS_TOKEN }}
-          name: run_id-${{ env.BRANCH_OR_TAG }}-txt
+          name: run_id-${{ env.BRANCH_OR_TAG }}.txt
           latest: true
           path: builder
           repo: SKuhlmanns/steves-test-repo
@@ -92,7 +92,7 @@ jobs:
       - name: Get artifacts
         working-directory: builder
         run: |
-          run_id=`cat run_id-${{ env.BRANCH_OR_TAG }}-txt`
+          run_id=`cat run_id-${{ env.BRANCH_OR_TAG }}.txt`
           curl -H "Authorization: token ${{ secrets.KUHLMANNS_TOKEN }}" -sL \
           https://api.github.com/repos/SKuhlmanns/steves-test-repo/actions/runs/${run_id}/artifacts \
           -o artifacts.txt
@@ -142,6 +142,14 @@ jobs:
           name: version-num-${{ env.BRANCH_OR_TAG }}-txt
           path: |
             build/version_num.txt
+
+      - name: Upload run_id artifact
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: run_id-${{ env.BRANCH_OR_TAG }}.txt
+          path: |
+            build/run_id-${{ env.BRANCH_OR_TAG }}.txt
 
 #  linux-trigger:
 #    needs: linux-build
