@@ -103,13 +103,14 @@ jobs:
           cat artifacts.txt | grep '"id":' | cut -d':' -f2 | cut -d"," -f1 > id.txt
           paste -d "" name.txt id.txt > artifacts.lst
           rm id.txt name.txt artifacts.txt
+          cat artifacts.lst
           while IFS= read -r line; do
             filename=`echo $line | cut -d" " -f1`
             artifact_id=`echo $line | cut -d" " -f2`
-            curl -H "Authorization: token $token" -sLJO \
-            https://api.github.com/repos/SKuhlmanns/steves-test-repo/actions/artifacts/${artifact_id}/zip
-            unzip ${filename}.zip
-            rm ${filename}.zip
+            #curl -H "Authorization: token $token" -sLJO \
+            #https://api.github.com/repos/SKuhlmanns/steves-test-repo/actions/artifacts/${artifact_id}/zip
+            #unzip ${filename}.zip
+            #rm ${filename}.zip
           done < artifacts.lst
 
       - name: Display contents
