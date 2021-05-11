@@ -97,27 +97,29 @@ jobs:
           cat run_id-${{ env.BRANCH_OR_TAG }}.txt
           run_id=`cat run_id-${{ env.BRANCH_OR_TAG }}.txt`
           rm run_id-${{ env.BRANCH_OR_TAG }}.txt
-          curl -H "Authorization: token ${{ secrets.KUHLMANNS_TOKEN }}" -sL \
-          https://api.github.com/repos/SKuhlmanns/steves-test-repo/actions/runs/${run_id}/artifacts \
-          -o artifacts.txt
-          # Strip out the name and id from the curl output
-          cat artifacts.txt | grep '"name":' | cut -d'"' -f4 > name.txt
-          cat artifacts.txt | grep '"id":' | cut -d':' -f2 | cut -d"," -f1 > id.txt
-          paste -d "" name.txt id.txt > artifacts.lst
-          rm id.txt name.txt artifacts.txt
-          cat artifacts.lst
-          # Use the artifact id download artifacts, unzip them and remove the zip file
-          while IFS= read -r line; do
-            filename=`echo $line | cut -d" " -f1`
-            artifact_id=`echo $line | cut -d" " -f2`
-            if [[ "${filename}" != *"run_id-${{ env.BRANCH_OR_TAG }}.txt"* ]]; then 
-              curl -H "Authorization: token ${{ secrets.KUHLMANNS_TOKEN }}" -sLJO \
-              https://api.github.com/repos/SKuhlmanns/steves-test-repo/actions/artifacts/${artifact_id}/zip
-              unzip ${filename}.zip
-              rm ${filename}.zip
-            fi
-          done < artifacts.lst
-          rm artifacts.lst
+          ../build/get_github_artifacts.sh ${run_id} ${{ secrets.KUHLMANNS_TOKEN }}
+
+          #curl -H "Authorization: token ${{ secrets.KUHLMANNS_TOKEN }}" -sL \
+          #https://api.github.com/repos/SKuhlmanns/steves-test-repo/actions/runs/${run_id}/artifacts \
+          #-o artifacts.txt
+          ## Strip out the name and id from the curl output
+          #cat artifacts.txt | grep '"name":' | cut -d'"' -f4 > name.txt
+          #cat artifacts.txt | grep '"id":' | cut -d':' -f2 | cut -d"," -f1 > id.txt
+          #paste -d "" name.txt id.txt > artifacts.lst
+          #rm id.txt name.txt artifacts.txt
+          #cat artifacts.lst
+          ## Use the artifact id download artifacts, unzip them and remove the zip file
+          #while IFS= read -r line; do
+          #  filename=`echo $line | cut -d" " -f1`
+          #  artifact_id=`echo $line | cut -d" " -f2`
+          #  if [[ "${filename}" != *"run_id-${{ env.BRANCH_OR_TAG }}.txt"* ]]; then 
+          #    curl -H "Authorization: token ${{ secrets.KUHLMANNS_TOKEN }}" -sLJO \
+          #    https://api.github.com/repos/SKuhlmanns/steves-test-repo/actions/artifacts/${artifact_id}/zip
+          #    unzip ${filename}.zip
+          #    rm ${filename}.zip
+          #  fi
+          #done < artifacts.lst
+          #rm artifacts.lst
 
       - name: Display contents
         working-directory: builder
