@@ -9,9 +9,9 @@ if [ $# -lt $EXPECTED_ARGS ]
 then
     clear
     echo "Usage: $0 {run_id} {password_token} '[artifact_list]'"
-    echo "Where: [run_id] = ########"
-    echo "       [password_token] = Users Github password or token"
-    echo "       [artifact_list] = space separated list of artifacts between quotes"
+    echo "Where: {run_id} = ########"
+    echo "       {password_token} = Users Github password or token"
+    echo "       [artifact_list] = optional space separated list of quoated artifacts"
     echo
     echo "Examples:"
     echo
