@@ -28,7 +28,14 @@ build_dir=`dirname $0`
 # Check to see if a artifact_list has been entered by the user.
 # If not, use the github artifacts list in the build directory.
 if [ -z "${artifact_list}" ]; then
-    artifact_list=`cat ${build_dir}/github_artifact.lst`
+    if [ -f ${build_dir}/github_artifact.lst ]; then 
+        artifact_list=`cat ${build_dir}/github_artifact.lst`
+    else
+	   echo
+       echo "Error - You must enter some artifacts to download"
+       echo "        or add a ${build_dir}/github_artifact.lst file."
+       exit 1
+    fi
 fi
 
 # Use the run id to get a list of artifacts to download from github.
