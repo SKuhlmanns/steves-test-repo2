@@ -48,7 +48,7 @@ jobs:
           echo
           echo "$STEPS_CONTEXT"
 
-      - name: Set branch or tag name from git reference
+      - name: Set branch or tag name from github reference
         run: |
           BRANCH_OR_TAG=`basename ${{ github.ref }}`
           if [[ $BRANCH_OR_TAG == 'COMM'* ]]; then
