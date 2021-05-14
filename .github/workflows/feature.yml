@@ -50,36 +50,10 @@ jobs:
           echo
           echo "$STEPS_CONTEXT"
 
-      - name: Set branch or tag name from github reference
+      - name: Set branch name from github reference
         run: |
           BRANCH_OR_TAG=`basename ${{ github.ref }}`
-          if [[ $BRANCH_OR_TAG == 'COMM'* ]]; then
-            VERSION=`echo $BRANCH_OR_TAG | cut -d"_" -f2`
-            BRANCH_OR_TAG="LIB_${VERSION}"
-          fi
-          echo "BRANCH_OR_TAG: ${BRANCH_OR_TAG}"
           echo "BRANCH_OR_TAG=${BRANCH_OR_TAG}" >> $GITHUB_ENV
-
-#      - name: Download artifacts from steves-test-repo
-#        uses: aochmann/actions-download-artifact@1.0.4
-#        with:
-#          # Optional, GitHub token
-#          github_token: ${{ secrets.KUHLMANNS_TOKEN }}
-#
-#          # Optional, uploaded artifact name,
-#          # will download all artifacts if not specified
-#          # and extract them in respective subdirectories
-#          # https://github.com/actions/download-artifact#download-all-artifacts
-#          name: version-num-${{ env.BRANCH_OR_TAG }}-txt
-#
-#          # Optional, download latest artifact
-#          latest: true
-#
-#          # Optional, directory where to extract artifact
-#          path: builder
-#
-#          # Optional, defaults to current repo
-#          repo: SKuhlmanns/steves-test-repo
 
       - name: Download run_id from steves-test-repo
         uses: aochmann/actions-download-artifact@1.0.4
@@ -155,7 +129,7 @@ jobs:
 #    steps:
 #      - name: Trigger - steves-test-repo3 event
 #        run: |
-#          curl -X POST https://api.github.com/repos/SKuhlmanns/steves-test-repo3/actions/workflows/${{ env.CHILD_YAML }}/dispatches \
+#          curl -X POST https://api.github.com/repos/SKuhlmanns/steves-test-repo3/actions/workflows/feature.yml/dispatches \
 #          -H 'Accept: application/vnd.github.v3+json' \
 #          -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} \
 #          -d '{"ref":"${{ github.ref }}"}'
