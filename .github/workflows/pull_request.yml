@@ -123,7 +123,7 @@ jobs:
         run: |
           echo "Repo Owner:" ${{ github.repository_owner }}
           echo "Run ID:" ${{ github.run_id }}
-          echo ${{ github.run_id }} > run_id-${{ env.BRANCH_OR_TAG }}.txt
+          echo ${{ github.run_id }} > run_id-${{ env.BRANCH_NAME }}.txt
 
           export VER_NUM=`cat version.txt`
           echo ${VER_NUM}${PHASE_ID}-${BUILD_NUMBER} > version_num.txt
@@ -155,7 +155,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: run_id-${{ env.BRANCH_OR_TAG }}.txt
+          name: run_id-${{ env.BRANCH_NAME }}.txt
           retention-days: 14
           path: |
-            build/run_id-${{ env.BRANCH_OR_TAG }}.txt
+            build/run_id-${{ env.BRANCH_NAME }}.txt
