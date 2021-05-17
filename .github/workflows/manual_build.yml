@@ -49,6 +49,8 @@ jobs:
           echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
           LIB_BRANCH=`echo ${{ github.event.inputs.LIB_BRANCH }} | tr "/" "-"`
           echo "LIB_BRANCH=${LIB_BRANCH}" >> $GITHUB_ENV
+          echo "BRANCH_NAME:${BRANCH_NAME}"
+          echo "LIB_BRANCH:${LIB_BRANCH}"
 
       - name: Download run_id from steves-test-repo
         uses: aochmann/actions-download-artifact@1.0.4
