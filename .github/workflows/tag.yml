@@ -93,7 +93,7 @@ jobs:
         run: |
           echo "Repo Owner:" ${{ github.repository_owner }}
           echo "Run ID:" ${{ github.run_id }}
-          echo ${{ github.run_id }} > run_id-${{ env.LIB_TAG_NAME }}.txt
+          echo ${{ github.run_id }} > run_id-${{ env.COMM_TAG_NAME }}.txt
 
           export VER_NUM=`cat version.txt` 
           echo "${VER_NUM}${PHASE_ID}-${BUILD_NUMBER}" > version_num.txt
