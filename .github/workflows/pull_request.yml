@@ -4,12 +4,12 @@ on:
   pull_request:
 #    branches:
 #      - '**'           # Pull request events matching any branch name
-  workflow_dispatch:    # May be needed to rebuild project that has failed
-    inputs:
-      BRANCH:
-        description: 'Git Branch Name'
-        required: true
-        default: 'develop'
+#  workflow_dispatch:    # May be needed to rebuild project that has failed
+#    inputs:
+#      BRANCH:
+#        description: 'Git Branch Name'
+#        required: true
+#        default: 'develop'
 
 env:
   DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }} # To display github context for debugging
