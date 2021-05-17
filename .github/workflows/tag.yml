@@ -48,42 +48,21 @@ jobs:
           echo
           echo "$STEPS_CONTEXT"
 
-      - name: Set branch or tag name from github reference
+      - name: Set tag names from github reference
         run: |
-          BRANCH_OR_TAG=`basename ${{ github.ref }}`
-          if [[ $BRANCH_OR_TAG == 'COMM'* ]]; then
-            VERSION=`echo $BRANCH_OR_TAG | cut -d"_" -f2`
-            BRANCH_OR_TAG="LIB_${VERSION}"
+          COMM_TAG_NAME=`basename ${{ github.ref }}`
+          if [[ ${COMM_TAG_NAME} == 'COMM'* ]]; then
+            VERSION=`echo ${COMM_TAG_NAME} | cut -d"_" -f2`
+            LIB_TAG_NAME=LIB_${VERSION}
           fi
-          echo "BRANCH_OR_TAG: ${BRANCH_OR_TAG}"
-          echo "BRANCH_OR_TAG=${BRANCH_OR_TAG}" >> $GITHUB_ENV
-
-#      - name: Download artifacts from steves-test-repo
-#        uses: aochmann/actions-download-artifact@1.0.4
-#        with:
-#          # Optional, GitHub token
-#          github_token: ${{ secrets.KUHLMANNS_TOKEN }}
-#
-#          # Optional, uploaded artifact name,
-#          # will download all artifacts if not specified
-#          # and extract them in respective subdirectories
-#          # https://github.com/actions/download-artifact#download-all-artifacts
-#          name: version-num-${{ env.BRANCH_OR_TAG }}-txt
-#
-#          # Optional, download latest artifact
-#          latest: true
-#
-#          # Optional, directory where to extract artifact
-#          path: builder
-#
-#          # Optional, defaults to current repo
-#          repo: SKuhlmanns/steves-test-repo
+          echo "COMM_TAG_NAME=${COMM_TAG_NAME}" >> $GITHUB_ENV
+          echo "LIB_TAG_NAME=${LIB_TAG_NAME}" >> $GITHUB_ENV
 
       - name: Download run_id from steves-test-repo
         uses: aochmann/actions-download-artifact@1.0.4
         with:
           github_token: ${{ secrets.KUHLMANNS_TOKEN }}
-          name: run_id-${{ env.BRANCH_OR_TAG }}.txt
+          name: run_id-${{ env.LIB_TAG_NAME }}.txt
           latest: true
           path: builder
           repo: SKuhlmanns/steves-test-repo
@@ -92,9 +71,9 @@ jobs:
         working-directory: builder
         run: |
           # Set the run_id
-          cat run_id-${{ env.BRANCH_OR_TAG }}.txt
-          run_id=`cat run_id-${{ env.BRANCH_OR_TAG }}.txt`
-          rm run_id-${{ env.BRANCH_OR_TAG }}.txt
+          cat run_id-${{ env.LIB_TAG_NAME }}.txt
+          run_id=`cat run_id-${{ env.LIB_TAG_NAME }}.txt`
+          rm run_id-${{ env.LIB_TAG_NAME }}.txt
           # Use the run_id and token/password to get artifacts with an external bash script
           ../build/get_github_artifacts.sh ${run_id} ${{ secrets.KUHLMANNS_TOKEN }}
 
@@ -106,32 +85,16 @@ jobs:
           echo "PHASE ID: ${PHASE_ID}"
           echo "BUILD NUMBER: ${BUILD_NUMBER}"
 
-#      - name: Setup build environment for release tags
-#        if: contains(github.ref,'refs/tags/LIB')
-#        run: |
-#          echo "PHASE ID: ${PHASE_ID}"
-#          echo "BUILD NUMBER: ${BUILD_NUMBER}"
-#          echo "Setting PHASE ID to blank"
-#          echo "PHASE_ID=" >> $GITHUB_ENV
-
-#      - name: Setup build environment for release tags
-#        if: contains(github.ref,'refs/tags/NOVOS')
-#        run: |
-#          echo "PHASE ID: ${PHASE_ID}"
-#          echo "BUILD NUMBER: ${BUILD_NUMBER}"
-#          echo "Setting PHASE ID to blank"
-#          echo "PHASE_ID=" >> $GITHUB_ENV
-
       - name: Build the application
         working-directory: build
         run: |
           echo "Repo Owner:" ${{ github.repository_owner }}
           echo "Run ID:" ${{ github.run_id }}
-          echo ${{ github.run_id }} > run_id-${{ env.BRANCH_OR_TAG }}.txt
+          echo ${{ github.run_id }} > run_id-${{ env.LIB_TAG_NAME }}.txt
 
           export VER_NUM=`cat version.txt` 
-          echo "${VER_NUM}${{ env.PHASE_ID }}-${BUILD_NUMBER}" > version_num.txt
-          PHASE_ID=${{ env.PHASE_ID }}
+          echo "${VER_NUM}${PHASE_ID}-${BUILD_NUMBER}" > version_num.txt
+          PHASE_ID=${PHASE_ID}
           echo "PHASE ID: ${PHASE_ID}"
           cat version_num.txt
           bash bbuild.sh .. 
@@ -140,7 +103,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: version-${{ env.BRANCH_OR_TAG }}-txt
+          name: version-${{ env.COMM_TAG_NAME }}-txt
           retention-days: 90
           path: |
             build/version.txt
@@ -149,7 +112,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: version-num-${{ env.BRANCH_OR_TAG }}-txt
+          name: version-num-${{ env.COMM_TAG_NAME }}-txt
           retention-days: 90
           path: |
             build/version_num.txt
@@ -158,7 +121,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: run_id-${{ env.BRANCH_OR_TAG }}.txt
+          name: run_id-${{ env.COMM_TAG_NAME }}.txt
           retention-days: 90
           path: |
-            build/run_id-${{ env.BRANCH_OR_TAG }}.txt
+            build/run_id-${{ env.COMM_TAG_NAME }}.txt

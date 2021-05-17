@@ -18,7 +18,6 @@ jobs:
     env:
       BUILD_NUMBER: ${{ github.run_number }}
       PHASE_ID: x
-      CHILD_YAML: push.yml
 
     steps:
       - name: Checkout code
@@ -49,15 +48,11 @@ jobs:
           echo
           echo "$STEPS_CONTEXT"
 
-      - name: Set branch or tag name from github reference
+      - name: Set branch name from github reference
         run: |
-          BRANCH_OR_TAG=`basename ${{ github.ref }}`
-          if [[ $BRANCH_OR_TAG == 'COMM'* ]]; then
-            VERSION=`echo $BRANCH_OR_TAG | cut -d"_" -f2`
-            BRANCH_OR_TAG="LIB_${VERSION}"
-          fi
-          echo "BRANCH_OR_TAG: ${BRANCH_OR_TAG}"
-          echo "BRANCH_OR_TAG=${BRANCH_OR_TAG}" >> $GITHUB_ENV
+          BRANCH_NAME=`basename ${{ github.ref }}`
+          echo "BRANCH_NAME: ${BRANCH_NAME}"
+          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
 
 #      - name: Download artifacts from steves-test-repo
 #        uses: aochmann/actions-download-artifact@1.0.4
@@ -69,7 +64,7 @@ jobs:
 #          # will download all artifacts if not specified
 #          # and extract them in respective subdirectories
 #          # https://github.com/actions/download-artifact#download-all-artifacts
-#          name: version-num-${{ env.BRANCH_OR_TAG }}-txt
+#          name: version-num-${{ env.BRANCH_NAME }}-txt
 #
 #          # Optional, download latest artifact
 #          latest: true
@@ -84,7 +79,7 @@ jobs:
         uses: aochmann/actions-download-artifact@1.0.4
         with:
           github_token: ${{ secrets.KUHLMANNS_TOKEN }}
-          name: run_id-${{ env.BRANCH_OR_TAG }}.txt
+          name: run_id-${{ env.BRANCH_NAME }}.txt
           latest: true
           path: builder
           repo: SKuhlmanns/steves-test-repo
@@ -93,9 +88,9 @@ jobs:
         working-directory: builder
         run: |
           # Set the run_id
-          cat run_id-${{ env.BRANCH_OR_TAG }}.txt
-          run_id=`cat run_id-${{ env.BRANCH_OR_TAG }}.txt`
-          rm run_id-${{ env.BRANCH_OR_TAG }}.txt
+          cat run_id-${{ env.BRANCH_NAME }}.txt
+          run_id=`cat run_id-${{ env.BRANCH_NAME }}.txt`
+          rm run_id-${{ env.BRANCH_NAME }}.txt
           # Use the run_id and token/password to get artifacts with an external bash script
           ../build/get_github_artifacts.sh ${run_id} ${{ secrets.KUHLMANNS_TOKEN }}
 
@@ -112,7 +107,7 @@ jobs:
         run: |
           echo "Repo Owner:" ${{ github.repository_owner }}
           echo "Run ID:" ${{ github.run_id }}
-          echo ${{ github.run_id }} > run_id-${{ env.BRANCH_OR_TAG }}.txt
+          echo ${{ github.run_id }} > run_id-${{ env.BRANCH_NAME }}.txt
 
           export VER_NUM=`cat version.txt` 
           echo "${VER_NUM}${{ env.PHASE_ID }}-${BUILD_NUMBER}" > version_num.txt
@@ -125,7 +120,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: version-${{ env.BRANCH_OR_TAG }}-txt
+          name: version-${{ env.BRANCH_NAME }}-txt
           retention-days: 30
           path: |
             build/version.txt
@@ -134,7 +129,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: version-num-${{ env.BRANCH_OR_TAG }}-txt
+          name: version-num-${{ env.BRANCH_NAME }}-txt
           retention-days: 30
           path: |
             build/version_num.txt
@@ -143,10 +138,10 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: run_id-${{ env.BRANCH_OR_TAG }}.txt
+          name: run_id-${{ env.BRANCH_NAME }}.txt
           retention-days: 30
           path: |
-            build/run_id-${{ env.BRANCH_OR_TAG }}.txt
+            build/run_id-${{ env.BRANCH_NAME }}.txt
 
 #  linux-triggers:
 #    needs: linux-build
@@ -154,7 +149,7 @@ jobs:
 #    steps:
 #      - name: Trigger - steves-test-repo3 event
 #        run: |
-#          curl -X POST https://api.github.com/repos/SKuhlmanns/steves-test-repo3/actions/workflows/${{ env.CHILD_YAML }}/dispatches \
+#          curl -X POST https://api.github.com/repos/SKuhlmanns/steves-test-repo3/actions/workflows/develop.yml/dispatches \
 #          -H 'Accept: application/vnd.github.v3+json' \
 #          -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} \
 #          -d '{"ref":"${{ github.ref }}"}'
