@@ -3,14 +3,14 @@ name: Manual build
 on: 
   workflow_dispatch:
     inputs:
-      LIB_BRANCH:
-        description: 'Git Library Branch Name'
-        required: true
-        default: 'develop'
 #      PHASE_ID:
 #        description: 'Phase Identifier (x, f, b or null)'
 #        required: false
-#        default: ''
+#        default: 'x'
+      LIB_BRANCH:
+        description: 'Common Library Branch Name'
+        required: true
+        default: 'develop'
 #      TAG:
 #        description: 'Tag (N/Y)'
 #        required: true
