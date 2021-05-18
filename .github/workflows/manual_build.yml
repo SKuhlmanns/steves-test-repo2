@@ -3,10 +3,6 @@ name: Manual build
 on: 
   workflow_dispatch:
     inputs:
-#      BRANCH:
-#        description: 'Git Branch Name'
-#        required: true
-#        default: 'develop'
       LIB_BRANCH:
         description: 'Git Library Branch Name'
         required: true

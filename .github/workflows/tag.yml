@@ -56,10 +56,10 @@ jobs:
             VERSION=`echo ${COMM_TAG_NAME} | cut -d"_" -f2`
             LIB_TAG_NAME=LIB_${VERSION}
           fi
-          echo "COMM_TAG_NAME=${COMM_TAG_NAME}" >> $GITHUB_ENV
-          echo "LIB_TAG_NAME=${LIB_TAG_NAME}" >> $GITHUB_ENV
           echo "COMM_TAG_NAME: ${COMM_TAG_NAME}"
           echo "LIB_TAG_NAME: ${LIB_TAG_NAME}"
+          echo "COMM_TAG_NAME=${COMM_TAG_NAME}" >> $GITHUB_ENV
+          echo "LIB_TAG_NAME=${LIB_TAG_NAME}" >> $GITHUB_ENV
 
       - name: Download run_id from steves-test-repo
         uses: aochmann/actions-download-artifact@1.0.4
