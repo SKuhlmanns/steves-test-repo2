@@ -39,13 +39,6 @@ jobs:
       PHASE_ID: x
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Make builder directory
-        run: |
-          mkdir -p builder
-
       - name: Set branch names
         run: |
           BRANCH_NAME=`basename ${{ github.ref }}`
@@ -54,6 +47,13 @@ jobs:
           echo "LIB_BRANCH=${LIB_BRANCH}" >> $GITHUB_ENV
           echo "BRANCH_NAME:${BRANCH_NAME}"
           echo "LIB_BRANCH:${LIB_BRANCH}"
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Make builder directory
+        run: |
+          mkdir -p builder
 
       - name: Download run_id from steves-test-repo
         uses: aochmann/actions-download-artifact@1.0.4
