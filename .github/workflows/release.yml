@@ -31,7 +31,7 @@ jobs:
             echo "BRANCH_NAME: ${BRANCH_NAME}"
             echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
           else
-            echo "ERROR - Not a release branch"
+            echo "ERROR - Must use a release branch!"
             exit 1
           fi
 
