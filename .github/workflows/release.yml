@@ -6,7 +6,7 @@ on:
       # Push events on release branches
       - 'release_v*'
       - 'release/release_v*'
-#  workflow_dispatch:    # Used to trigger from parent projects
+  workflow_dispatch:    # Used to trigger from parent projects
 
 env:
   DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }}    # To display github context for debugging
