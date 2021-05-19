@@ -6,7 +6,10 @@ on:
       # Push events on release branches
       - 'release_v*'
       - 'release/release_v*'
-  workflow_dispatch:    # Used to trigger from parent projects
+  workflow_dispatch:    # Used to trigger from parent projects and manually
+    branches:
+      - 'release_v*'
+      - 'release/release_v*'
 
 env:
   DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }}    # To display github context for debugging
@@ -21,6 +24,17 @@ jobs:
       PHASE_ID: b
 
     steps:
+      - name: Set branch name from github reference
+        run: |
+          BRANCH_NAME=`basename ${{ github.ref }}`
+          if [[ ${BRANCH_NAME} == *'release_v'* ]]; then
+            echo "BRANCH_NAME: ${BRANCH_NAME}"
+            echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
+          else
+            echo "ERROR - Not a release branch"
+            exit 1
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -48,12 +62,6 @@ jobs:
           echo "STEPS CONTEXT:"
           echo
           echo "$STEPS_CONTEXT"
-
-      - name: Set branch name from github reference
-        run: |
-          BRANCH_NAME=`basename ${{ github.ref }}`
-          echo "BRANCH_NAME: ${BRANCH_NAME}"
-          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
 
 #      - name: Download artifacts from steves-test-repo
 #        uses: aochmann/actions-download-artifact@1.0.4

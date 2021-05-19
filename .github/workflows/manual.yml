@@ -2,10 +2,10 @@ name: Manual build
 
 on: 
   workflow_dispatch:
-    branches:
-      - develop
-      - 'feature/**'
-      - '*feature*'
+#    branches:
+#      - develop
+#      - 'feature/**'
+#      - '*feature*'
 #    branches-ignore:
 #      - 'release_v*'
 #      - 'release/release_v*'
@@ -43,13 +43,18 @@ jobs:
         run: |
           BRANCH_NAME=`basename ${{ github.ref }}`
           if [[ ${BRANCH_NAME} == *'release_v'* ]]; then
+            echo "Error - Do not use a release branch!"
             exit 1
+          elif [[ ${BRANCH_NAME} == develop ]]; then
+            echo "Error - Do not use the develop branch!"
+            exit 1
+          else 
+            echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
+            LIB_BRANCH=`echo ${{ github.event.inputs.LIB_BRANCH }} | tr "/" "-"`
+            echo "LIB_BRANCH=${LIB_BRANCH}" >> $GITHUB_ENV
+            echo "BRANCH_NAME:${BRANCH_NAME}"
+            echo "LIB_BRANCH:${LIB_BRANCH}"
           fi
-          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
-          LIB_BRANCH=`echo ${{ github.event.inputs.LIB_BRANCH }} | tr "/" "-"`
-          echo "LIB_BRANCH=${LIB_BRANCH}" >> $GITHUB_ENV
-          echo "BRANCH_NAME:${BRANCH_NAME}"
-          echo "LIB_BRANCH:${LIB_BRANCH}"
 
       - name: Checkout code
         uses: actions/checkout@v2

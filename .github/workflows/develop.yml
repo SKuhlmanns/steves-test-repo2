@@ -5,7 +5,9 @@ on:
     branches:
       # Push events on develop branch
       - develop
-  workflow_dispatch:    # Used to trigger from parent projects
+  workflow_dispatch:    # Used to trigger from parent projects and manually
+    branches:
+      - develop
 
 env:
   DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }}    # To display github context for debugging
@@ -20,6 +22,17 @@ jobs:
       PHASE_ID: x
 
     steps:
+      - name: Set branch name from github reference
+        run: |
+          BRANCH_NAME=`basename ${{ github.ref }}`
+          if [[ ${BRANCH_NAME} == develop ]]; then
+            echo "BRANCH_NAME: ${BRANCH_NAME}"
+            echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
+          else
+            echo "Error - Must use the develop branch"
+            exit 1
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -47,12 +60,6 @@ jobs:
           echo "STEPS CONTEXT:"
           echo
           echo "$STEPS_CONTEXT"
-
-      - name: Set branch name from github reference
-        run: |
-          BRANCH_NAME=`basename ${{ github.ref }}`
-          echo "BRANCH_NAME: ${BRANCH_NAME}"
-          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
 
 #      - name: Download artifacts from steves-test-repo
 #        uses: aochmann/actions-download-artifact@1.0.4
