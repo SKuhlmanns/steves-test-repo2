@@ -2,6 +2,10 @@ name: Manual build
 
 on: 
   workflow_dispatch:
+    branches:
+      - develop
+      - 'feature/**
+      - '*feature*'
     branches-ignore:
       - 'release_v*'
       - 'release/release_v*'
