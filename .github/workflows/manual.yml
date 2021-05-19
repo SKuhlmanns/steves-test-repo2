@@ -42,7 +42,7 @@ jobs:
       - name: Set branch names
         run: |
           BRANCH_NAME=`basename ${{ github.ref }}`
-          if [[ ${BRANCH_NAME} == *'release_v'* ]]; then
+          if [[ ${BRANCH_NAME} == 'release'* ]]; then
             echo "Error - Do not use a develop or release branch!"
             exit 1
           elif [[ ${BRANCH_NAME} == develop ]]; then
