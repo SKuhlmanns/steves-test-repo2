@@ -41,7 +41,7 @@ rm -f run_id_artifact.lst
 curl -H "Authorization: token ${password_token}" -sL \
 https://api.github.com/repos/SKuhlmanns/${repo_name}/actions/runs/${run_id}/artifacts \
 -o artifacts.txt
-cat artifacts.txt
+#cat artifacts.txt
 
 # Strip out the name and id from the curl output; generate a run id artifact list file.
 cat artifacts.txt | grep '"name":' | cut -d'"' -f4 > name.txt
