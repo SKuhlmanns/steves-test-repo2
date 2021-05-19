@@ -2,6 +2,9 @@ name: Manual build
 
 on: 
   workflow_dispatch:
+    branches-ignore:
+      - 'release_v*'
+      - 'release/release_v*'
     inputs:
 #      PHASE_ID:
 #        description: 'Phase Identifier (x, f, b or null)'
