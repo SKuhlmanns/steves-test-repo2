@@ -43,10 +43,10 @@ jobs:
         run: |
           BRANCH_NAME=`basename ${{ github.ref }}`
           if [[ ${BRANCH_NAME} == *'release_v'* ]]; then
-            echo "Error - Do not use a release branch!"
+            echo "Error - Do not use a develop or release branch!"
             exit 1
           elif [[ ${BRANCH_NAME} == develop ]]; then
-            echo "Error - Do not use the develop branch!"
+            echo "Error - Do not use a develop or release branch!"
             exit 1
           else 
             echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
