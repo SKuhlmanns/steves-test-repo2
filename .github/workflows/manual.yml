@@ -6,9 +6,9 @@ on:
       - develop
       - 'feature/**'
       - '*feature*'
-    branches-ignore:
-      - 'release_v*'
-      - 'release/release_v*'
+#    branches-ignore:
+#      - 'release_v*'
+#      - 'release/release_v*'
     inputs:
 #      PHASE_ID:
 #        description: 'Phase Identifier (x, f, b or null)'
