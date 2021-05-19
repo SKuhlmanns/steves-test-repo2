@@ -98,7 +98,7 @@ jobs:
         working-directory: builder
         run: |
           ls -l
-          cat version_num.txt
+          cat version_num*.txt
           echo "PHASE ID: ${PHASE_ID}"
           echo "BUILD NUMBER: ${BUILD_NUMBER}"
 
@@ -110,10 +110,10 @@ jobs:
           echo ${{ github.run_id }} > run_id-${{ env.BRANCH_NAME }}.txt
 
           export VER_NUM=`cat version.txt` 
-          echo "${VER_NUM}${{ env.PHASE_ID }}-${BUILD_NUMBER}" > version_num.txt
+          echo "${VER_NUM}${{ env.PHASE_ID }}-${BUILD_NUMBER}" > version_num_comm.txt
           PHASE_ID=${{ env.PHASE_ID }}
           echo "PHASE ID: ${PHASE_ID}"
-          cat version_num.txt
+          cat version_num*.txt
           bash bbuild.sh .. 
 
       - name: Upload version.txt artifact
@@ -124,15 +124,16 @@ jobs:
           retention-days: 30
           path: |
             build/version.txt
+            build/version_num_comm.txt
 
-      - name: Upload version_num.txt artifact
-        if: ${{ success() }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: version-num-${{ env.BRANCH_NAME }}-txt
-          retention-days: 30
-          path: |
-            build/version_num.txt
+#      - name: Upload version_num.txt artifact
+#        if: ${{ success() }}
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: version-num-${{ env.BRANCH_NAME }}-txt
+#          retention-days: 30
+#          path: |
+#            build/version_num_comm.txt
 
       - name: Upload run_id artifact
         if: ${{ success() }}
