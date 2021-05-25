@@ -1,4 +1,4 @@
-name: Manual build
+name: Manual user branch build
 
 on: 
   workflow_dispatch:

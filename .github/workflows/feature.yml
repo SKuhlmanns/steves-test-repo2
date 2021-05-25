@@ -1,4 +1,4 @@
-name: Build feature branches
+name: Build feature branches - disabled
 
 on: 
   push:
