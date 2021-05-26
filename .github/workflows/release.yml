@@ -154,13 +154,13 @@ jobs:
             build/run_id-${{ env.BRANCH_NAME }}.txt
 
   # Trigger the downstream project(s)/repos
-#  linux-triggers:
-#    needs: linux-build
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Trigger - steves-test-repo3 event
-#        run: |
-#          curl -X POST https://api.github.com/repos/SKuhlmanns/steves-test-repo3/actions/workflows/release.yml/dispatches \
-#          -H 'Accept: application/vnd.github.v3+json' \
-#          -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} \
-#          -d '{"ref":"${{ github.ref }}"}'
+  linux-triggers:
+    needs: linux-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger - steves-test-repo3 event
+        run: |
+          curl -X POST https://api.github.com/repos/SKuhlmanns/steves-test-repo3/actions/workflows/release.yml/dispatches \
+          -H 'Accept: application/vnd.github.v3+json' \
+          -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} \
+          -d '{"ref":"${{ github.ref }}"}'
