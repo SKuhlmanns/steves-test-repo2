@@ -7,6 +7,15 @@ on:
         description: 'Common Library Branch Name'
         required: true
         default: 'develop'
+      LIB_WORKFLOW:
+        description: 'Common Library Workflow Name'
+        required: true
+        default: 'develop.yml'
+#      LIB_RUN_NUM:
+#        description: 'Common Library Run Number'
+#        required: true
+#        default: '33'
+
 env:
   DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }} # To display github context for debugging
 
@@ -49,12 +58,12 @@ jobs:
         with:
           github_token: ${{secrets.KUHLMANNS_TOKEN}}
           # Required, workflow file name or ID
-          workflow: release.yml
+          workflow: ${{env.LIB_WORKFLOW}}
           #workflow_conclusion: "completed,success"
           branch: ${{env.LIB_BRANCH}}
           # Optional, will use specified workflow run
           #run_id: 1122334455
-          #run_number: 34
+          #run_number: ${{env.LIB_RUN_NUM}}
           #event: workflow_dispatch
           name: version-num-txt
           path: builder
