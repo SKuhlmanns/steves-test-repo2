@@ -51,7 +51,7 @@ jobs:
           # Required, workflow file name or ID
           workflow: release.yml
           #workflow_conclusion: "completed,success"
-          branch: ${{env.BRANCH_NAME}}
+          branch: ${{env.LIB_BRANCH}}
           # Optional, will use specified workflow run
           #run_id: 1122334455
           #run_number: 34
