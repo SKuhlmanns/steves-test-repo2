@@ -67,13 +67,19 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{secrets.KUHLMANNS_TOKEN}}
+          # Required, workflow file name or ID
           workflow: release.yml
+          #workflow_conclusion: "completed,success"
           branch: ${{env.BRANCH_NAME}}
+          # Optional, will use specified workflow run
+          #run_id: 1122334455
+          #run_number: 34
+          #event: workflow_dispatch
           name: version-num-txt
           path: builder
           repo: SKuhlmanns/steves-test-repo
 
-      - name: Display Library contents
+      - name: Display contents
         working-directory: builder
         run: |
           ls -l
