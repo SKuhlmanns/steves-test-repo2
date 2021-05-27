@@ -3,18 +3,18 @@ name: Manual user branch build
 on: 
   workflow_dispatch:
     inputs:
-      LIB_BRANCH:
-        description: 'Common Library Branch Name'
-        required: true
-        default: 'develop'
+#      LIB_BRANCH:
+#        description: 'Common Library Branch Name'
+#        required: true
+#        default: 'develop'
       LIB_WORKFLOW:
         description: 'Common Library Workflow Name'
         required: true
         default: 'develop.yml'
-#      LIB_RUN_NUM:
-#        description: 'Common Library Run Number'
-#        required: true
-#        default: '33'
+      LIB_RUN_NUM:
+        description: 'Common Library Run Number'
+        required: true
+        default: '33'
 
 env:
   DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }} # To display github context for debugging
@@ -40,10 +40,10 @@ jobs:
             exit 1
           else 
             echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
-            LIB_BRANCH=`echo ${{ github.event.inputs.LIB_BRANCH }} | tr "/" "-"`
-            echo "LIB_BRANCH=${LIB_BRANCH}" >> $GITHUB_ENV
+            #LIB_BRANCH=`echo ${{ github.event.inputs.LIB_BRANCH }} | tr "/" "-"`
+            #echo "LIB_BRANCH=${LIB_BRANCH}" >> $GITHUB_ENV
             echo "BRANCH_NAME:${BRANCH_NAME}"
-            echo "LIB_BRANCH:${LIB_BRANCH}"
+            #echo "LIB_BRANCH:${LIB_BRANCH}"
           fi
 
       - name: Checkout code
@@ -60,10 +60,10 @@ jobs:
           # Required, workflow file name or ID
           workflow: ${{github.event.inputs.LIB_WORKFLOW}}
           #workflow_conclusion: "completed,success"
-          branch: ${{env.LIB_BRANCH}}
+          #branch: ${{env.LIB_BRANCH}}
           # Optional, will use specified workflow run
           #run_id: 1122334455
-          #run_number: ${{github.event.inputs.LIB_RUN_NUM}}
+          run_number: ${{github.event.inputs.LIB_RUN_NUM}}
           #event: workflow_dispatch
           name: version-num-txt
           path: builder
