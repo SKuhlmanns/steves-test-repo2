@@ -127,7 +127,6 @@ jobs:
           path: |
             build/run_id-${{ env.BRANCH_NAME }}.txt
 
-
   # Trigger the downstream project(s)/repos
   linux-triggers:
     needs: linux-build
