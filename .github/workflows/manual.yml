@@ -13,8 +13,8 @@ on:
         default: 'develop.yml'
       LIB_RUN_NUM:
         description: 'Common Library Run Number'
-        required: true
-        default: '33'
+        required: false
+        default: ''
 
 env:
   DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }} # To display github context for debugging
