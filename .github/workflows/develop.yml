@@ -22,7 +22,7 @@ jobs:
       PHASE_ID: x
 
     steps:
-      - name: Set branch name from github reference
+      - name: Check branch name in github reference
         run: |
           BRANCH_NAME=`basename ${{ github.ref }}`
           if [[ ${BRANCH_NAME} == develop ]]; then
@@ -61,47 +61,23 @@ jobs:
           echo
           echo "$STEPS_CONTEXT"
 
-#      - name: Download artifacts from steves-test-repo
-#        uses: aochmann/actions-download-artifact@1.0.4
-#        with:
-#          # Optional, GitHub token
-#          github_token: ${{ secrets.KUHLMANNS_TOKEN }}
-#
-#          # Optional, uploaded artifact name,
-#          # will download all artifacts if not specified
-#          # and extract them in respective subdirectories
-#          # https://github.com/actions/download-artifact#download-all-artifacts
-#          name: version-num-${{ env.BRANCH_NAME }}-txt
-#
-#          # Optional, download latest artifact
-#          latest: true
-#
-#          # Optional, directory where to extract artifact
-#          path: builder
-#
-#          # Optional, defaults to current repo
-#          repo: SKuhlmanns/steves-test-repo
-
-      - name: Download run_id from steves-test-repo
-        uses: aochmann/actions-download-artifact@1.0.4
+      - name: Download Library artifacts
+        uses: dawidd6/action-download-artifact@v2
         with:
-          github_token: ${{ secrets.KUHLMANNS_TOKEN }}
-          name: run_id-${{ env.BRANCH_NAME }}.txt
-          latest: true
+          github_token: ${{secrets.KUHLMANNS_TOKEN}}
+          # Required, workflow file name or ID
+          workflow: develop.yml
+          #workflow_conclusion: "completed,success"
+          branch: ${{env.BRANCH_NAME}}
+          # Optional, will use specified workflow run
+          #run_id: 1122334455
+          #run_number: 34
+          #event: workflow_dispatch
+          name: version-num-txt
           path: builder
           repo: SKuhlmanns/steves-test-repo
 
-      - name: Get Library artifacts
-        working-directory: builder
-        run: |
-          # Set the run_id
-          cat run_id-${{ env.BRANCH_NAME }}.txt
-          run_id=`cat run_id-${{ env.BRANCH_NAME }}.txt`
-          rm run_id-${{ env.BRANCH_NAME }}.txt
-          # Use the run_id and token/password to get artifacts with an external bash script
-          ../build/get_github_artifacts.sh ${run_id} ${{ secrets.KUHLMANNS_TOKEN }} steves-test-repo lib_artifact.lst
-
-      - name: Display Library contents
+      - name: Display contents
         working-directory: builder
         run: |
           ls -l
@@ -127,7 +103,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: version-${{ env.BRANCH_NAME }}-txt
+          name: version-txt
           retention-days: 30
           path: |
             build/version.txt
@@ -137,7 +113,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: version-num-${{ env.BRANCH_NAME }}-txt
+          name: version-num-txt
           retention-days: 30
           path: |
             build/version_num_comm.txt
@@ -150,6 +126,7 @@ jobs:
           retention-days: 30
           path: |
             build/run_id-${{ env.BRANCH_NAME }}.txt
+
 
   # Trigger the downstream project(s)/repos
   linux-triggers:

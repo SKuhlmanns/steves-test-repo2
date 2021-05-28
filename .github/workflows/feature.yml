@@ -55,26 +55,23 @@ jobs:
           echo "BRANCH_NAME: ${BRANCH_NAME}"
           echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
 
-      - name: Download run_id from steves-test-repo
-        uses: aochmann/actions-download-artifact@1.0.4
+      - name: Download Library artifacts
+        uses: dawidd6/action-download-artifact@v2
         with:
-          github_token: ${{ secrets.KUHLMANNS_TOKEN }}
-          name: run_id-${{ env.BRANCH_NAME }}.txt
-          latest: true
+          github_token: ${{secrets.KUHLMANNS_TOKEN}}
+          # Required, workflow file name or ID
+          workflow: feature.yml
+          #workflow_conclusion: "completed,success"
+          branch: ${{env.BRANCH_NAME}}
+          # Optional, will use specified workflow run
+          #run_id: 1122334455
+          #run_number: 34
+          #event: workflow_dispatch
+          name: version-num-txt
           path: builder
           repo: SKuhlmanns/steves-test-repo
 
-      - name: Get Library artifacts
-        working-directory: builder
-        run: |
-          # Set the run_id
-          cat run_id-${{ env.BRANCH_NAME }}.txt
-          run_id=`cat run_id-${{ env.BRANCH_NAME }}.txt`
-          rm run_id-${{ env.BRANCH_NAME }}.txt
-          # Use the run_id and token/password to get artifacts with an external bash script
-          ../build/get_github_artifacts.sh ${run_id} ${{ secrets.KUHLMANNS_TOKEN }} steves-test-repo lib_artifact.lst
-
-      - name: Display Library contents
+      - name: Display contents
         working-directory: builder
         run: |
           ls -l
@@ -100,7 +97,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: version-${{ env.BRANCH_NAME }}-txt
+          name: version-txt
           retention-days: 45
           path: |
             build/version.txt
@@ -110,7 +107,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v2
         with:
-          name: version-num-${{ env.BRANCH_NAME }}-txt
+          name: version-num-txt
           retention-days: 45
           path: |
             build/version_num_comm.txt
