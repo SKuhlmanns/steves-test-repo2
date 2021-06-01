@@ -61,14 +61,14 @@ jobs:
           echo "COMM_TAG_NAME=${COMM_TAG_NAME}" >> $GITHUB_ENV
           echo "LIB_TAG_NAME=${LIB_TAG_NAME}" >> $GITHUB_ENV
 
-      - name: Download run_id from steves-test-repo
-        uses: aochmann/actions-download-artifact@1.0.4
-        with:
-          github_token: ${{ secrets.KUHLMANNS_TOKEN }}
-          name: run_id-${{ env.LIB_TAG_NAME }}.txt
-          latest: true
-          path: builder
-          repo: SKuhlmanns/steves-test-repo
+#      - name: Download run_id from steves-test-repo
+#        uses: aochmann/actions-download-artifact@1.0.4
+#        with:
+#          github_token: ${{ secrets.KUHLMANNS_TOKEN }}
+#          name: run_id-${{ env.LIB_TAG_NAME }}.txt
+#          latest: true
+#          path: builder
+#          repo: SKuhlmanns/steves-test-repo
 
 #      - name: Get Library artifacts
 #        working-directory: builder
@@ -80,15 +80,15 @@ jobs:
 #          # Use the run_id and token/password to get artifacts with an external bash script
 #          ../build/get_github_artifacts.sh ${run_id} ${{ secrets.KUHLMANNS_TOKEN }} steves-test-repo lib_artifact.lst
 
-      - name: Set run_ids
-        working-directory: builder
-        run: |
-          # Set the run_id
-          cat run_id-${{ env.LIB_TAG_NAME }}.txt
-          run_id=`cat run_id-${{ env.LIB_TAG_NAME }}.txt`
-          rm run_id-${{ env.LIB_TAG_NAME }}.txt
-          echo "RUN_ID=${run_id}"
-          echo "RUN_ID=${run_id}" >> $GITHUB_ENV
+#      - name: Set run_ids
+#        working-directory: builder
+#        run: |
+#          # Set the run_id
+#          cat run_id-${{ env.LIB_TAG_NAME }}.txt
+#          run_id=`cat run_id-${{ env.LIB_TAG_NAME }}.txt`
+#          rm run_id-${{ env.LIB_TAG_NAME }}.txt
+#          echo "RUN_ID=${run_id}"
+#          echo "RUN_ID=${run_id}" >> $GITHUB_ENV
 
       - name: Download Library artifacts
         uses: dawidd6/action-download-artifact@v2
