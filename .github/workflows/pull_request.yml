@@ -53,7 +53,7 @@ jobs:
           echo
           echo "$STEPS_CONTEXT"
 
-      # Check to see if the libraries feature branch (head_ref) exists.
+      # Check to see if the libraries user branch (head_ref) exists.
       # If not, use the target branch (base_ref).
       - name: Set libraries branch and workflow
         run: |
@@ -61,7 +61,7 @@ jobs:
           -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} -o curl_output.txt \
           https://api.github.com/repos/SKuhlmanns/steves-test-repo/branches/${{ github.head_ref }}
           # If the user branch does not exist, use the branch name to determine if the 
-          # target branch is the develop or a release branch and set the workflow 
+          # target branch is a release or develop (default) branch and set the workflow 
           # variable accordingly.
           if grep -q "Branch not found" curl_output.txt; then
             #LIB_BRANCH=`echo ${{ github.base_ref }} | tr "/" "-"`
