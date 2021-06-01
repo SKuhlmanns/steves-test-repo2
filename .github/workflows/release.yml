@@ -24,7 +24,7 @@ jobs:
       PHASE_ID: b
 
     steps:
-      - name: Check branch name in github reference
+      - name: Check and set branch name
         run: |
           BRANCH_NAME=`basename ${{ github.ref }}`
           if [[ ${BRANCH_NAME} == *'release_v'* ]]; then

@@ -26,7 +26,7 @@ jobs:
         run: |
           mkdir -p builder
 
-      - name: Set branch from github reference
+      - name: Set branch name
         run: |
           BRANCH_NAME=`echo ${{ github.head_ref }} | tr "/" "-"`
           echo "BRANCH_NAME: ${BRANCH_NAME}"
