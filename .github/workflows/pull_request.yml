@@ -111,7 +111,7 @@ jobs:
         with:
           github_token: ${{secrets.KUHLMANNS_TOKEN}}
           # Required, workflow file name or ID
-          workflow: ${{LIB_WORKFLOW}}.yml
+          workflow: ${{env.LIB_WORKFLOW}}.yml
           #workflow_conclusion: "completed,success"
           branch: ${{env.BRANCH_NAME}}
           # Optional, will use specified workflow run
