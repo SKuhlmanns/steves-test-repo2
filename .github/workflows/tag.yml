@@ -48,7 +48,7 @@ jobs:
           echo
           echo "$STEPS_CONTEXT"
 
-      - name: Set tag names from github reference
+      - name: Set tag names
         run: |
           COMM_TAG_NAME=`basename ${{ github.ref }}`
           LIB_TAG_NAME=`basename ${{ github.ref }}`
@@ -97,9 +97,10 @@ jobs:
           # Required, workflow file name or ID
           workflow: tag.yml
           #workflow_conclusion: "completed,success"
-          branch: ${{env.BRANCH_NAME}}
+          #branch: ${{env.BRANCH_NAME}}
+          branch: ${{env.LIB_TAG_NAME}}
           # Optional, will use specified workflow run
-          run_id: ${{env.RUN_ID}}
+          #run_id: ${{env.RUN_ID}}
           #run_number: 34
           #event: workflow_dispatch
           name: version-num-txt
