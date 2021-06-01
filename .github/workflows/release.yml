@@ -27,7 +27,7 @@ jobs:
       - name: Check and set branch name
         run: |
           BRANCH_NAME=`basename ${{ github.ref }}`
-          if [[ ${BRANCH_NAME} == *'release_v'* ]]; then
+          if [[ ${BRANCH_NAME} == 'release_v'* ]] || [[ ${BRANCH_NAME} == 'release/release_v'* ]]; then
             echo "BRANCH_NAME: ${BRANCH_NAME}"
             echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
           else
