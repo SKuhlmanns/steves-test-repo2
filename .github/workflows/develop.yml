@@ -80,17 +80,13 @@ jobs:
       - name: Display contents
         working-directory: builder
         run: |
-          ls -l
+          ls -lR
           cat version_num*.txt
-          echo "PHASE ID: ${PHASE_ID}"
-          echo "BUILD NUMBER: ${BUILD_NUMBER}"
 
       - name: Build the application
         working-directory: build
         run: |
           echo "Repo Owner:" ${{ github.repository_owner }}
-          echo "Run ID:" ${{ github.run_id }}
-          echo ${{ github.run_id }} > run_id-${{ env.BRANCH_NAME }}.txt
 
           export VER_NUM=`cat version.txt` 
           echo "${VER_NUM}${{ env.PHASE_ID }}-${BUILD_NUMBER}" > version_num_comm.txt
@@ -117,15 +113,6 @@ jobs:
           retention-days: 30
           path: |
             build/version_num_comm.txt
-
-      - name: Upload run_id artifact
-        if: ${{ success() }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: run_id-${{ env.BRANCH_NAME }}.txt
-          retention-days: 30
-          path: |
-            build/run_id-${{ env.BRANCH_NAME }}.txt
 
   # Trigger the downstream project(s)/repos
   linux-triggers:
