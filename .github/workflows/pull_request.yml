@@ -114,8 +114,7 @@ jobs:
       - name: Build the application
         working-directory: build
         run: |
-          echo "Repo Owner:" ${{ github.repository_owner }}
-
+          #echo "Repo Owner:" ${{ github.repository_owner }}
           export VER_NUM=`cat version.txt`
           echo ${VER_NUM}${PHASE_ID}-${BUILD_NUMBER} > version_num_comm.txt
           echo "PHASE ID: ${PHASE_ID}"
