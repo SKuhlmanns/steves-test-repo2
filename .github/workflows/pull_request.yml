@@ -53,7 +53,8 @@ jobs:
           rm -f curl_output.txt
           echo "LIB_BRANCH=${LIB_BRANCH}" >> $GITHUB_ENV
           echo "LIB_BRANCH: ${LIB_BRANCH}"
-          echo "::set-output name=LIB_BRANCH::${{env.LIB_BRANCH}}"
+          echo "::set-output name=LIB_BRANCH::sjk-output-test"
+          #echo "::set-output name=LIB_BRANCH::${{env.LIB_BRANCH}}"
           echo "LIB_WORKFLOW=${LIB_WORKFLOW}" >> $GITHUB_ENV
           echo "LIB_WORKFLOW: ${LIB_WORKFLOW}"
           echo "::set-output name=LIB_WORKFLOW::${{env.LIB_WORKFLOW}}"
