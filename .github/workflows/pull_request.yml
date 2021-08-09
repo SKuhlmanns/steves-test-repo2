@@ -23,7 +23,7 @@ jobs:
     steps:
       # Check to see if the libraries user branch (head_ref) exists.
       # If not, use the target branch (base_ref).
-      - id: LIB
+      - name:  Set libraries workflow and git hash
         run: |
           curl -sH "Accept: application/vnd.github.v3+json" \
           -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} -o curl_output.txt \
@@ -64,6 +64,9 @@ jobs:
           echo "LIB_COMMIT_HASH=${GIT_HASH}" >> $GITHUB_ENV
           echo "LIB_COMMIT_HASH: ${GIT_HASH}"
           echo "::set-output name=LIB_COMMIT_HASH::${{env.GIT_HASH}}"
+
+      - id: LIB 
+        run: echo "::set-output name=LIB_BRANCH::${{env.LIB_BRANCH}}"
 
       # Use this to help debug issues
       - name: Dump context
