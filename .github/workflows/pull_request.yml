@@ -25,6 +25,7 @@ jobs:
       # If not, use the target branch (base_ref).
       - id: LIB
         run: |
+          echo Set libraries workflows and git hash
           curl -sH "Accept: application/vnd.github.v3+json" \
           -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} -o curl_output.txt \
           https://api.github.com/repos/SKuhlmanns/steves-test-repo/branches/${{ github.head_ref }}
@@ -51,9 +52,13 @@ jobs:
             LIB_EVENT=pull_request
           fi
           rm -f curl_output.txt
+          echo "LIB_BRANCH: ${LIB_BRANCH}"
           echo "::set-output name=LIB_BRANCH::${LIB_BRANCH}"
+          echo "LIB_WORKFLOW: ${LIB_WORKFLOW}"
           echo "::set-output name=LIB_WORKFLOW::${LIB_WORKFLOW}"
+          echo "LIB_EVENT: ${LIB_EVENT}"
           echo "::set-output name=LIB_EVENT::${LIB_EVENT}"
+          echo "LIB_COMMIT_HASH: ${GIT_HASH}"
           echo "::set-output name=LIB_COMMIT_HASH::${GIT_HASH}"
 
       # Use this to help debug issues
@@ -93,32 +98,32 @@ jobs:
         run: |
           mkdir -p builder
 
-      - name: Set libraries workflow and git hash
-        run: |
-          echo LIB_BRANCH=${{needs.LIB.outputs.LIB_BRANCH}}
-          echo LIB_BRANCH=${{needs.LIB.outputs.LIB_BRANCH}} >> $GITHUB_ENV
-          echo LIB_WORKFLOW=${{needs.LIB.outputs.LIB_WORKFLOW}}
-          echo LIB_WORKFLOW=${{needs.LIB.outputs.LIB_WORKFLOW}} >> $GITHUB_ENV
-          echo LIB_EVENT=${{needs.LIB.outputs.LIB_EVENT}}
-          echo LIB_EVENT=${{needs.LIB.outputs.LIB_EVENT}} >> $GITHUB_ENV
-          echo LIB_COMMIT_HASH=${{needs.LIB.outputs.GIT_HASH}}
-          echo LIB_COMMIT_HASH=${{needs.LIB.outputs.GIT_HASH}} >> $GITHUB_ENV
+      #- name: Set libraries workflows and git hash
+      #  run: |
+      #    echo LIB_BRANCH=${{needs.setup-build.outputs.LIB_BRANCH}}
+      #    echo LIB_BRANCH=${{needs.setup-build.outputs.LIB_BRANCH}} >> $GITHUB_ENV
+      #    echo LIB_WORKFLOW=${{needs.setup-build.outputs.LIB_WORKFLOW}}
+      #    echo LIB_WORKFLOW=${{needs.setup-build.outputs.LIB_WORKFLOW}} >> $GITHUB_ENV
+      #    echo LIB_EVENT=${{needs.setup-build.outputs.LIB_EVENT}}
+      #    echo LIB_EVENT=${{needs.setup-build.outputs.LIB_EVENT}} >> $GITHUB_ENV
+      #    echo LIB_COMMIT_HASH=${{needs.setup-build.outputs.LIB_COMMIT_HASH}}
+      #    echo LIB_COMMIT_HASH=${{needs.setup-build.outputs.LIB_COMMIT_HASH}} >> $GITHUB_ENV
 
       - name: Download Library artifacts
         uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{secrets.KUHLMANNS_TOKEN}}
           # Required, workflow file name or ID
-          workflow: ${{ env.LIB_WORKFLOW }}
+          workflow: ${{needs.setup-build.outputs.LIB_WORKFLOW}}
           # Do not specify pr, commit, branch, run_id together or
           # workflow_conclusion and run_id together Pick just on of each or none.
           #workflow_conclusion: "completed,success"
-          commit: ${{env.LIB_COMMIT_HASH}}
-          #branch: ${{ env.LIB_BRANCH }}
+          commit: ${{needs.setup-build.outputs.LIB_COMMIT_HASH}}
+          #branch: ${{needs.setup-build.outputs.LIB_BRANCH}}
           # Optional, will use specified workflow run
           #run_id: 1122334455
           #run_number: 34
-          event: ${{ env.LIB_EVENT }}
+          event: ${{needs.setup-build.outputs.LIB_EVENT}}
           name: version-num-txt
           path: builder
           repo: SKuhlmanns/steves-test-repo
