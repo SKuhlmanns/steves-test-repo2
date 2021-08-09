@@ -51,9 +51,13 @@ jobs:
             LIB_EVENT=pull_request
           fi
           rm -f curl_output.txt
+          echo "LIB_BRANCH: ${LIB_BRANCH}"
           echo "::set-output name=LIB_BRANCH::${LIB_BRANCH}"
+          echo "LIB_WORKFLOW: ${LIB_WORKFLOW}"
           echo "::set-output name=LIB_WORKFLOW::${LIB_WORKFLOW}"
+          echo "LIB_EVENT: ${LIB_EVENT}"
           echo "::set-output name=LIB_EVENT::${LIB_EVENT}"
+          echo "LIB_COMMIT_HASH: ${GIT_HASH}"
           echo "::set-output name=LIB_COMMIT_HASH::${GIT_HASH}"
 
       # Use this to help debug issues
