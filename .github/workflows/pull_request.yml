@@ -25,6 +25,7 @@ jobs:
       # If not, use the target branch (base_ref).
       - id: LIB
         run: |
+          echo "Set libraries workflows and git hash"
           curl -sH "Accept: application/vnd.github.v3+json" \
           -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} -o curl_output.txt \
           https://api.github.com/repos/SKuhlmanns/steves-test-repo/branches/${{ github.head_ref }}
