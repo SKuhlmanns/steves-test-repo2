@@ -11,45 +11,19 @@ env:
 
 jobs:
 
-  linux-build:
+  setup-build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      BUILD_NUMBER: ${{ github.run_number }}
-      PHASE_ID: x
+    outputs:
+      LIB_BRANCH: ${{ steps.LIB.outputs.LIB_BRANCH }}
+      LIB_WORKFLOW: ${{ steps.LIB.outputs.LIB_WORKFLOW }}
+      LIB_EVENT: ${{ steps.LIB.outputs.LIB_EVENT }}
+      LIB_COMMIT_HASH: ${{ steps.LIB.outputs.GIT_HASH }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Make builder directory
-        run: |
-          mkdir -p builder
-
-      # Use this to help debug issues
-      - name: Dump context
-        # See Settings -> Secrets to turn this step on and off
-        if: ${{ env.DISPLAY_CONTEXT == 'true' }}
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-          JOB_CONTEXT: ${{ toJSON(job) }}
-          STEPS_CONTEXT: ${{ toJSON(steps) }}
-        run: |
-          echo "GITHUB CONTEXT:"
-          echo
-          echo "$GITHUB_CONTEXT"
-          echo
-          echo "JOB CONTEXT:"
-          echo
-          echo "$JOB_CONTEXT"
-          echo
-          echo "STEPS CONTEXT:"
-          echo
-          echo "$STEPS_CONTEXT"
-
       # Check to see if the libraries user branch (head_ref) exists.
       # If not, use the target branch (base_ref).
-      - name: Set libraries workflow and git hash
+      - id: LIB
         run: |
           curl -sH "Accept: application/vnd.github.v3+json" \
           -u ${{ secrets.KUHLMANNS_CURL_TOKEN }} -o curl_output.txt \
@@ -76,15 +50,59 @@ jobs:
             LIB_WORKFLOW=pull_request.yml
             LIB_EVENT=pull_request
           fi
-          echo "LIB_BRANCH=${LIB_BRANCH}"
-          echo "LIB_BRANCH=${LIB_BRANCH}" >> $GITHUB_ENV
-          echo "LIB_WORKFLOW=${LIB_WORKFLOW}"
-          echo "LIB_WORKFLOW=${LIB_WORKFLOW}" >> $GITHUB_ENV
-          echo "LIB_EVENT=${LIB_EVENT}"
-          echo "LIB_EVENT=${LIB_EVENT}" >> $GITHUB_ENV
-          echo "LIB_COMMIT_HASH=${GIT_HASH}"
-          echo "LIB_COMMIT_HASH=${GIT_HASH}" >> $GITHUB_ENV
           rm -f curl_output.txt
+          echo "::set-output name=LIB_BRANCH::${LIB_BRANCH}"
+          echo "::set-output name=LIB_WORKFLOW::${LIB_WORKFLOW}"
+          echo "::set-output name=LIB_EVENT::${LIB_EVENT}"
+          echo "::set-output name=LIB_COMMIT_HASH::${GIT_HASH}"
+
+      # Use this to help debug issues
+      - name: Dump context
+        # See Settings -> Secrets to turn this step on and off
+        if: ${{ env.DISPLAY_CONTEXT == 'true' }}
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+          JOB_CONTEXT: ${{ toJSON(job) }}
+          STEPS_CONTEXT: ${{ toJSON(steps) }}
+        run: |
+          echo "GITHUB CONTEXT:"
+          echo
+          echo "$GITHUB_CONTEXT"
+          echo
+          echo "JOB CONTEXT:"
+          echo
+          echo "$JOB_CONTEXT"
+          echo
+          echo "STEPS CONTEXT:"
+          echo
+          echo "$STEPS_CONTEXT"
+
+  linux-build:
+    needs: [setup-build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
+      PHASE_ID: x
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Make builder directory
+        run: |
+          mkdir -p builder
+
+      - name: Set libraries workflow and git hash
+        run: |
+          echo LIB_BRANCH=${{needs.LIB.outputs.LIB_BRANCH}}
+          echo LIB_BRANCH=${{needs.LIB.outputs.LIB_BRANCH}} >> $GITHUB_ENV
+          echo LIB_WORKFLOW=${{needs.LIB.outputs.LIB_WORKFLOW}}
+          echo LIB_WORKFLOW=${{needs.LIB.outputs.LIB_WORKFLOW}} >> $GITHUB_ENV
+          echo LIB_EVENT=${{needs.LIB.outputs.LIB_EVENT}}
+          echo LIB_EVENT=${{needs.LIB.outputs.LIB_EVENT}} >> $GITHUB_ENV
+          echo LIB_COMMIT_HASH=${{needs.LIB.outputs.GIT_HASH}}
+          echo LIB_COMMIT_HASH=${{needs.LIB.outputs.GIT_HASH}} >> $GITHUB_ENV
 
       - name: Download Library artifacts
         uses: dawidd6/action-download-artifact@v2
